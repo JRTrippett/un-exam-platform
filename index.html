@@ -3,541 +3,574 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>UN Medical Examination Platform</title>
+<title>UN Exam Generator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
 :root {
-  --un-blue:   #009EDB;
-  --un-dark:   #0A2B6C;
-  --un-mid:    #1A4FA0;
-  --un-light:  #E8F4FB;
-  --white:     #FFFFFF;
-  --off:       #F7F9FC;
-  --text:      #1A2236;
-  --muted:     #6B7A94;
-  --border:    #D6E0EC;
-  --success:   #1B6B3A;
-  --danger:    #B02020;
-  --gold:      #8B6914;
-  --serif:     'Source Serif 4', Georgia, serif;
-  --sans:      'Source Sans 3', system-ui, sans-serif;
+  --blue:   #009EDB;
+  --dark:   #0A2B6C;
+  --light:  #E8F4FB;
+  --white:  #FFFFFF;
+  --off:    #F5F7FA;
+  --text:   #1A2236;
+  --muted:  #6B7A94;
+  --border: #D6E0EC;
+  --green:  #1B6B3A;
+  --red:    #B02020;
+  --gold:   #8B6914;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-body{font-family:var(--sans);background:var(--off);color:var(--text);font-size:14px;display:flex;flex-direction:column;height:100%}
+*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--off);
+  color: var(--text);
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
 
-/* TOPBAR */
-.topbar{background:var(--white);border-bottom:3px solid var(--un-blue);display:flex;align-items:center;gap:14px;padding:0 28px;height:58px;flex-shrink:0;z-index:100;box-shadow:0 1px 4px rgba(10,43,108,.09)}
-.tb-emblem{width:34px;height:34px;background:var(--un-dark);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.tb-emblem svg{width:20px;height:20px}
-.tb-name{font-family:var(--serif);font-size:.92rem;font-weight:600;color:var(--un-dark)}
-.tb-sub{font-size:.65rem;color:var(--muted);letter-spacing:.05em;text-transform:uppercase}
-.tb-div{width:1px;height:26px;background:var(--border);margin:0 4px}
-.tb-title{font-family:var(--serif);font-size:.95rem;font-weight:600;color:var(--un-dark)}
-.tb-right{margin-left:auto;display:flex;gap:7px}
-.lang-btn{font-size:.72rem;font-weight:700;padding:4px 11px;border-radius:3px;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);letter-spacing:.06em;transition:all .12s}
-.lang-btn.on{background:var(--un-dark);border-color:var(--un-dark);color:white}
-.lang-btn:hover:not(.on){border-color:var(--un-blue);color:var(--un-blue)}
+/* ── HEADER ── */
+header {
+  background: var(--dark);
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 32px;
+  height: 56px;
+  flex-shrink: 0;
+  border-bottom: 3px solid var(--blue);
+}
+.hdr-emblem {
+  width: 32px; height: 32px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 900; letter-spacing: -1px;
+  flex-shrink: 0;
+}
+.hdr-title { font-size: 1rem; font-weight: 600; letter-spacing: 0.02em; }
+.hdr-sub   { font-size: 0.68rem; opacity: 0.65; margin-top: 1px; letter-spacing: 0.04em; text-transform: uppercase; }
 
-/* LAYOUT */
-.layout{display:flex;flex:1;overflow:hidden;min-height:0}
+/* ── MAIN CONTAINER ── */
+.container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 36px 24px 60px;
+  width: 100%;
+}
 
-/* SIDEBAR */
-.sidebar{width:216px;flex-shrink:0;background:var(--white);border-right:1px solid var(--border);padding:20px 0 40px;display:flex;flex-direction:column;overflow-y:auto}
-.nav-sec{padding:10px 18px 3px;font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);border-top:1px solid var(--border);margin-top:6px}
-.nav-sec:first-child{border-top:none;margin-top:0}
-.nav-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;font-size:.83rem;color:var(--muted);border-left:3px solid transparent;transition:all .1s;user-select:none}
-.nav-item:hover{color:var(--un-dark);background:var(--off)}
-.nav-item.on{color:var(--un-dark);background:var(--un-light);border-left-color:var(--un-blue);font-weight:600}
-.nav-icon{font-size:.85rem;width:16px;text-align:center}
+/* ── STEP CARDS ── */
+.step {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 4px rgba(10,43,108,.06);
+}
+.step-hdr {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+}
+.step-num {
+  width: 26px; height: 26px;
+  background: var(--dark);
+  color: white;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.78rem; font-weight: 700;
+  flex-shrink: 0;
+}
+.step-title { font-size: 0.95rem; font-weight: 600; color: var(--dark); }
+.step-body { padding: 20px; }
 
-/* MAIN */
-.main{flex:1;padding:30px 34px;overflow-y:auto;min-width:0}
+/* ── DRAG & DROP ZONE ── */
+.drop-zone {
+  border: 2px dashed var(--border);
+  border-radius: 6px;
+  padding: 40px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.18s;
+  background: var(--off);
+  position: relative;
+}
+.drop-zone:hover, .drop-zone.dragging {
+  border-color: var(--blue);
+  background: var(--light);
+}
+.drop-zone.loaded {
+  border-color: var(--green);
+  background: #EAF7EE;
+  border-style: solid;
+}
+.drop-icon { font-size: 2.4rem; margin-bottom: 10px; line-height: 1; }
+.drop-main { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.drop-sub  { font-size: 0.8rem; color: var(--muted); }
+input[type=file] { display: none; }
 
-/* PAGE */
-.page{display:none}.page.on{display:block}
-.ph{margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border)}
-.ph h1{font-family:var(--serif);font-size:1.42rem;font-weight:600;color:var(--un-dark);margin-bottom:2px}
-.ph p{font-size:.8rem;color:var(--muted)}
+/* ── LOADED SUMMARY ── */
+.summary {
+  display: none;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: var(--off);
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  font-size: 0.83rem;
+}
+.summary.show { display: block; }
+.summary-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+.summary-row:last-child { margin-bottom: 0; }
 
-/* CARD */
-.card{background:var(--white);border:1px solid var(--border);border-radius:6px;box-shadow:0 1px 3px rgba(10,43,108,.06);margin-bottom:18px}
-.card-h{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.card-title{font-family:var(--serif);font-size:.92rem;font-weight:600;color:var(--un-dark)}
-.card-b{padding:18px}
+/* ── FORM ── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.fg { display: flex; flex-direction: column; gap: 5px; }
+.fg label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.fg .req { color: var(--red); }
+.fg input, .fg select {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.875rem;
+  color: var(--text);
+  background: white;
+  outline: none;
+  transition: border 0.12s;
+  width: 100%;
+}
+.fg input:focus, .fg select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(0,158,219,0.1);
+}
+.fg-full { grid-column: 1 / -1; }
 
-/* FORM */
-.fg{margin-bottom:14px}
-.fl{display:block;font-size:.72rem;font-weight:700;margin-bottom:4px;color:var(--text);letter-spacing:.03em;text-transform:uppercase}
-.req{color:var(--danger)}
-input[type=text],input[type=number],input[type=date],.fi,.fs,.fta{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:4px;font-family:var(--sans);font-size:.875rem;background:white;color:var(--text);outline:none;transition:border .12s}
-input:focus,.fi:focus,.fs:focus,.fta:focus{border-color:var(--un-blue);box-shadow:0 0 0 3px rgba(0,158,219,.11)}
-.fta{resize:vertical;min-height:60px}
-.fr2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-input[type=file]{display:none}
+/* ── OPTIONS ── */
+.opts-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 2px;
+}
+.opt-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.12s;
+  user-select: none;
+  background: white;
+}
+.opt-card:hover { border-color: var(--blue); background: var(--light); }
+.opt-card input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--dark); cursor: pointer; }
+.opt-card-text { font-size: 0.83rem; }
+.opt-card-title { font-weight: 600; color: var(--text); }
+.opt-card-sub   { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
 
-/* TOGGLE */
-.tog-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border)}
-.tog-row:last-child{border-bottom:none}
-.tog-lbl{font-size:.875rem;color:var(--text)}
-.tog-sub{font-size:.73rem;color:var(--muted);margin-top:1px}
-.tog{position:relative;width:36px;height:19px;flex-shrink:0}
-.tog input{opacity:0;width:0;height:0}
-.tog-sl{position:absolute;inset:0;cursor:pointer;background:var(--border);border-radius:20px;transition:.18s}
-.tog-sl::before{content:'';position:absolute;width:13px;height:13px;left:3px;top:3px;background:white;border-radius:50%;transition:.18s}
-.tog input:checked+.tog-sl{background:var(--un-blue)}
-.tog input:checked+.tog-sl::before{transform:translateX(17px)}
+/* ── DIFFICULTY ── */
+.diff-row { display: flex; gap: 8px; margin-top: 2px; }
+.diff-cb {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.78rem; font-weight: 700;
+  transition: all 0.12s;
+  user-select: none;
+}
+.diff-cb input { width: 14px; height: 14px; accent-color: var(--dark); }
+.diff-cb.d1:has(input:checked) { background: #D8F0E2; border-color: var(--green); color: var(--green); }
+.diff-cb.d2:has(input:checked) { background: #FDF3DC; border-color: var(--gold);  color: var(--gold); }
+.diff-cb.d3:has(input:checked) { background: #FDECEA; border-color: var(--red);   color: var(--red); }
 
-/* DIFFICULTY TOGGLE */
-.diff-row{display:flex;gap:6px;align-items:center;margin-top:6px}
-.diff-pill{padding:4px 12px;border-radius:3px;font-size:.72rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);transition:all .12s;letter-spacing:.03em;user-select:none}
-.diff-pill.on-1{background:#D8F0E2;border-color:#1B6B3A;color:#1B6B3A}
-.diff-pill.on-2{background:#FDF3DC;border-color:#8B6914;color:#8B6914}
-.diff-pill.on-3{background:#FDECEA;border-color:#B02020;color:#B02020}
+/* ── GENERATE BUTTON ── */
+.gen-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--dark);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.gen-btn:hover:not(:disabled) { background: #1A4FA0; }
+.gen-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
-/* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border-radius:4px;cursor:pointer;font-family:var(--sans);font-size:.83rem;font-weight:600;border:none;transition:all .12s;letter-spacing:.01em;white-space:nowrap}
-.btn-primary{background:var(--un-dark);color:white}
-.btn-primary:hover:not(:disabled){background:var(--un-mid)}
-.btn-primary:disabled{opacity:.5;cursor:not-allowed}
-.btn-sec{background:white;color:var(--text);border:1px solid var(--border)}
-.btn-sec:hover{background:var(--off);border-color:var(--un-blue);color:var(--un-blue)}
-.btn-sm{padding:4px 11px;font-size:.77rem}
-.btn-lg{padding:10px 22px;font-size:.88rem}
-.btn-danger{background:#FDECEA;color:var(--danger);border:1px solid #F0C0C0}
-.btn-danger:hover{background:#f8d4d4}
+/* ── STATUS / MESSAGES ── */
+.msg {
+  padding: 10px 14px;
+  border-radius: 5px;
+  font-size: 0.83rem;
+  margin-top: 12px;
+  display: none;
+  align-items: flex-start;
+  gap: 8px;
+  line-height: 1.5;
+}
+.msg.show { display: flex; }
+.msg-ok   { background: #EAF7EE; border: 1px solid #A8D8B8; color: var(--green); }
+.msg-err  { background: #FDECEA; border: 1px solid #F0C0C0; color: var(--red); }
+.msg-info { background: var(--light); border: 1px solid #B3D9F0; color: #005A8E; }
 
-/* BADGE */
-.badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:.68rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.b-blue{background:#DDF0FA;color:#0065A0}
-.b-green{background:#D8F0E2;color:#1B6B3A}
-.b-gold{background:#FDF3DC;color:#8B6914}
-.b-red{background:#FDECEA;color:#B02020}
-.b-purple{background:#F0E8FA;color:#6A1B9A}
-.b-gray{background:#EEF0F3;color:#4A5568}
-.b-d1{background:#D8F0E2;color:#1B6B3A}
-.b-d2{background:#FDF3DC;color:#8B6914}
-.b-d3{background:#FDECEA;color:#B02020}
+/* ── BADGE ── */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.b-blue   { background: #DDF0FA; color: #0065A0; }
+.b-green  { background: #D8F0E2; color: var(--green); }
+.b-gold   { background: #FDF3DC; color: var(--gold); }
+.b-purple { background: #F0E8FA; color: #6A1B9A; }
+.b-gray   { background: #EEF0F3; color: #4A5568; }
+.b-d1 { background: #D8F0E2; color: var(--green); }
+.b-d2 { background: #FDF3DC; color: var(--gold); }
+.b-d3 { background: #FDECEA; color: var(--red); }
 
-/* TABLE */
-.tbl{width:100%;border-collapse:collapse;font-size:.83rem}
-.tbl th{padding:8px 13px;text-align:left;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--off);border-bottom:1px solid var(--border)}
-.tbl td{padding:10px 13px;border-bottom:1px solid var(--border);vertical-align:middle}
-.tbl tr:last-child td{border-bottom:none}
-.tbl tbody tr:hover td{background:#FAFCFF}
+/* ── POOL INFO ── */
+.pool-info {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: var(--off);
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.pool-info strong { color: var(--dark); }
 
-/* ALERT */
-.alert{padding:10px 13px;border-radius:4px;font-size:.81rem;margin-bottom:14px;display:flex;align-items:flex-start;gap:9px;line-height:1.5}
-.a-info{background:var(--un-light);border:1px solid #B3D9F0;color:#005A8E}
-.a-warn{background:#FFF8E8;border:1px solid #F0D080;color:#7A5200}
-.a-ok{background:#EAF7EE;border:1px solid #A8D8B8;color:#1B6B3A}
+/* ── DIVIDER ── */
+hr { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
 
-/* UPLOAD ZONE */
-.drop-zone{border:2px dashed var(--border);border-radius:6px;padding:32px;text-align:center;cursor:pointer;transition:all .18s;background:var(--off)}
-.drop-zone:hover{border-color:var(--un-blue);background:var(--un-light)}
-.drop-icon{font-size:1.9rem;margin-bottom:8px}
-
-/* ROLE PILLS */
-.r-pills{display:flex;gap:6px;flex-wrap:wrap}
-.r-pill{padding:4px 13px;border-radius:3px;font-size:.72rem;font-weight:700;cursor:pointer;border:1.5px solid var(--border);background:white;color:var(--muted);transition:all .1s;text-transform:uppercase;letter-spacing:.03em;user-select:none}
-.r-pill:hover{border-color:var(--un-blue);color:var(--un-blue)}
-.r-pill.on{border-color:var(--un-dark);background:var(--un-dark);color:white}
-
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(10,43,108,.38);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px}
-.modal{background:white;border-radius:6px;box-shadow:0 16px 48px rgba(10,43,108,.22);width:100%;max-width:860px;max-height:92vh;overflow-y:auto;display:flex;flex-direction:column}
-.modal-hd{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
-.modal-title{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--un-dark)}
-.modal-x{background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--muted);line-height:1;padding:2px 6px}
-.modal-x:hover{color:var(--text)}
-.modal-bd{padding:22px;overflow-y:auto;flex:1}
-.modal-ft{padding:13px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;flex-shrink:0}
-
-/* PROGRESS BAR */
-.prog{background:var(--border);border-radius:20px;height:6px;overflow:hidden}
-.prog-fill{height:100%;background:var(--un-blue);border-radius:20px;transition:width .3s}
-
-/* EMPTY */
-.empty{text-align:center;padding:44px 20px;color:var(--muted)}
-.empty-icon{font-size:2rem;margin-bottom:10px;opacity:.55}
-.empty-text{font-size:.82rem;line-height:1.6}
-
-/* DIVIDER */
-.divider{height:1px;background:var(--border);margin:16px 0}
-
-/* ── EXAM DOCUMENT (print target) ── */
-.exam-doc{font-family:Arial,Helvetica,sans-serif;font-size:10.5pt;color:#000;line-height:1.45}
-.doc-hdr{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:14px;border-bottom:2px solid #000;margin-bottom:18px}
-.doc-logo-wrap{display:flex;align-items:flex-start;gap:10px}
-.doc-undp-mark{font-family:Arial,sans-serif;line-height:1.1}
-.doc-undp-un{font-size:26pt;font-weight:900;color:#009EDB;letter-spacing:-1px;line-height:1}
-.doc-undp-dp{font-size:7pt;letter-spacing:4px;color:#009EDB;margin-top:1px}
-.doc-org{font-size:10pt;font-weight:bold}
-.doc-tagline{font-size:7.5pt;font-style:italic;color:#555;margin-top:2px}
-.doc-date{font-size:10pt;text-align:right;padding-top:2px}
-.doc-titles{text-align:center;margin:16px 0 12px}
-.doc-label{font-size:11pt;font-weight:bold;text-decoration:underline;margin-bottom:5px}
-.doc-position{font-size:10.5pt;font-weight:bold;margin-bottom:2px}
-.doc-station{font-size:10.5pt;margin-bottom:2px}
-.doc-duration{font-size:10.5pt;font-weight:bold;margin-bottom:2px}
-.doc-grade{font-size:10.5pt;text-decoration:underline}
-.doc-rule{border:none;border-top:1px solid #aaa;margin:12px 0}
-.doc-sep{border:none;border-top:1px dashed #aaa;margin:12px 0}
-.doc-conf{font-size:10.5pt;font-weight:bold;margin-bottom:6px}
-.doc-instr{font-size:10pt;margin-bottom:6px}
-.doc-bullets{padding-left:22px;font-size:10pt;margin-bottom:8px}
-.doc-bullets li{margin-bottom:4px}
-.doc-bullets li u{text-decoration:underline}
-.doc-qs{margin-top:16px}
-.doc-q{margin-bottom:20px;page-break-inside:avoid}
-.doc-qtext{font-size:10.5pt;margin-bottom:7px}
-.doc-qnum{font-weight:bold}
-.doc-opts{display:grid;grid-template-columns:1fr 1fr;gap:3px 20px;padding-left:16px}
-.doc-opt{font-size:10pt}
-.doc-footer-hr{border:none;border-top:1px solid #aaa;margin-top:28px}
-.doc-footer-txt{font-size:8pt;text-align:right;color:#666;padding-top:3px}
+/* ── FOOTER ── */
+footer {
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--muted);
+  padding: 20px;
+  border-top: 1px solid var(--border);
+  background: var(--white);
+  margin-top: auto;
+}
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="tb-emblem">
-    <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="50" cy="50" r="44" stroke="white" stroke-width="5"/>
-      <ellipse cx="50" cy="50" rx="18" ry="44" stroke="white" stroke-width="3.5"/>
-      <line x1="6" y1="50" x2="94" y2="50" stroke="white" stroke-width="3.5"/>
-      <ellipse cx="50" cy="50" rx="44" ry="20" stroke="white" stroke-width="3.5"/>
-    </svg>
-  </div>
+<header>
+  <div class="hdr-emblem">UN</div>
   <div>
-    <div class="tb-name">United Nations</div>
-    <div class="tb-sub">Medical Examination Programme</div>
+    <div class="hdr-title">UN Medical Exam Generator</div>
+    <div class="hdr-sub">DOS-DHMOSH — Health Services</div>
   </div>
-  <div class="tb-div"></div>
-  <div class="tb-title">Exam Generator</div>
-  <div class="tb-right">
-    <button class="lang-btn on" id="btn-en" onclick="setLang('en')">EN</button>
-    <button class="lang-btn"    id="btn-fr" onclick="setLang('fr')">FR</button>
-  </div>
-</div>
+</header>
 
-<div class="layout">
+<div class="container">
 
-<!-- SIDEBAR -->
-<nav class="sidebar">
-  <div class="nav-sec">Question Banks</div>
-  <div class="nav-item on" id="nav-upload" onclick="nav('upload')"><span class="nav-icon">⬆</span> Upload QBank</div>
-  <div class="nav-item"    id="nav-browse" onclick="nav('browse')"><span class="nav-icon">📋</span> Browse Questions</div>
-  <div class="nav-sec" style="margin-top:10px">Exams</div>
-  <div class="nav-item"    id="nav-generate" onclick="nav('generate')"><span class="nav-icon">✦</span> Generate Exam</div>
-  <div class="nav-item"    id="nav-history"  onclick="nav('history')"><span class="nav-icon">📁</span> Exam History</div>
-  <div class="nav-sec" style="margin-top:10px">Settings</div>
-  <div class="nav-item"    id="nav-sources"  onclick="nav('sources')"><span class="nav-icon">⚙</span> SharePoint Sources</div>
-</nav>
-
-<!-- MAIN -->
-<main class="main">
-
-<!-- ══ UPLOAD ══ -->
-<div class="page on" id="page-upload">
-  <div class="ph">
-    <h1>Upload Question Bank</h1>
-    <p>Import an Excel (.xlsx) QBank file — questions are merged by role, not replaced</p>
-  </div>
-  <div class="alert a-info" style="margin-bottom:18px">
-    <span>ℹ</span>
-    <div><strong>Required columns:</strong> <code>Role</code>, <code>Category</code>, <code>Question_EN</code>, <code>Question_FR</code>, <code>A_EN</code> <code>B_EN</code> <code>C_EN</code> <code>D_EN</code>, <code>A_FR</code> <code>B_FR</code> <code>C_FR</code> <code>D_FR</code>, <code>Answer</code>, <code>Difficulty</code> (1/2/3). Valid roles: <strong>Nurse · Doctor · Medical Officer · Medical Coordinator · Lab Tech</strong></div>
-  </div>
-  <div class="card">
-    <div class="card-h"><span class="card-title">Import File</span></div>
-    <div class="card-b">
-      <div class="drop-zone" onclick="document.getElementById('fi').click()">
-        <input type="file" id="fi" accept=".xlsx,.xls" onchange="handleUpload(event)">
-        <div class="drop-icon">📊</div>
-        <div style="font-size:.875rem;color:var(--muted)"><strong style="color:var(--text)">Click to upload Excel file</strong><br>.xlsx or .xls — questions are merged by role</div>
+  <!-- ── STEP 1: LOAD QBANK ── -->
+  <div class="step">
+    <div class="step-hdr">
+      <div class="step-num">1</div>
+      <div class="step-title">Load Question Bank</div>
+    </div>
+    <div class="step-body">
+      <div class="drop-zone" id="drop-zone"
+           onclick="document.getElementById('file-input').click()"
+           ondragover="onDragOver(event)"
+           ondragleave="onDragLeave(event)"
+           ondrop="onDrop(event)">
+        <input type="file" id="file-input" accept=".xlsx,.xls" onchange="handleFile(event)">
+        <div class="drop-icon" id="drop-icon">📊</div>
+        <div class="drop-main" id="drop-main">Drag & drop your QBank Excel file here</div>
+        <div class="drop-sub" id="drop-sub">or click to browse · .xlsx or .xls</div>
       </div>
-      <div id="upload-msg" style="margin-top:12px"></div>
-    </div>
-  </div>
-  <div class="card" id="bank-card" style="display:none">
-    <div class="card-h"><span class="card-title">Loaded Question Pool</span><button class="btn btn-danger btn-sm" onclick="clearAll()">✕ Clear All</button></div>
-    <div class="card-b" id="bank-body"></div>
-  </div>
-  <div class="card">
-    <div class="card-h"><span class="card-title">Excel Template</span></div>
-    <div class="card-b">
-      <p style="font-size:.81rem;color:var(--muted);margin-bottom:12px">Pre-formatted template with sample rows for all five roles including the Difficulty column.</p>
-      <button class="btn btn-sec" onclick="downloadTemplate()">⬇ Download Template</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══ BROWSE ══ -->
-<div class="page" id="page-browse">
-  <div class="ph"><h1>Browse Questions</h1><p>Review all loaded questions by role and difficulty</p></div>
-  <div style="display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap">
-    <div class="r-pills" id="role-pills"></div>
-    <div class="diff-row" id="diff-pills"></div>
-    <input type="text" style="max-width:210px;margin-left:auto;padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:.83rem" id="q-search" placeholder="🔍 Search…" oninput="renderBrowse()">
-  </div>
-  <div class="card">
-    <div style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr>
-          <th style="width:28px">#</th>
-          <th>Role</th>
-          <th>Category</th>
-          <th>Difficulty</th>
-          <th>Question</th>
-          <th>Ans.</th>
-        </tr></thead>
-        <tbody id="browse-tbody"></tbody>
-      </table>
-      <div class="empty" id="browse-empty"><div class="empty-icon">📭</div><div class="empty-text">No questions loaded. Upload an Excel file first.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ GENERATE ══ -->
-<div class="page" id="page-generate">
-  <div class="ph"><h1>Generate Exam</h1><p>Configure parameters and generate a printable UN-formatted exam</p></div>
-  <div style="display:grid;grid-template-columns:1fr 320px;gap:22px;align-items:start">
-
-    <div class="card" style="margin-bottom:0">
-      <div class="card-h"><span class="card-title">Exam Configuration</span></div>
-      <div class="card-b">
-
-        <div class="fr2" style="margin-bottom:14px">
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Provider Role <span class="req">*</span></label>
-            <select class="fs" id="g-role" onchange="updatePreview()">
-              <option value="">— Select Role —</option>
-              <option value="Nurse">Nurse</option>
-              <option value="Doctor">Doctor</option>
-              <option value="Medical Officer">Medical Officer</option>
-              <option value="Medical Coordinator">Medical Coordinator</option>
-              <option value="Lab Tech">Lab Tech</option>
-            </select>
-          </div>
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Language <span class="req">*</span></label>
-            <select class="fs" id="g-lang" onchange="updatePreview()">
-              <option value="en">English</option>
-              <option value="fr">Français</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="fr2" style="margin-bottom:14px">
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Duty Station <span class="req">*</span></label>
-            <input type="text" id="g-station" placeholder="e.g. Galkayo, Somalia" oninput="updatePreview()">
-          </div>
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Exam Date</label>
-            <input type="date" id="g-date" oninput="updatePreview()">
-          </div>
-        </div>
-
-        <div class="fr2" style="margin-bottom:14px">
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Number of Questions</label>
-            <input type="number" id="g-nq" value="100" min="5" max="150" oninput="updatePreview()">
-          </div>
-          <div class="fg" style="margin-bottom:0">
-            <label class="fl">Grade / Level</label>
-            <input type="text" id="g-grade" placeholder="e.g. IPSA9, NOB, G6" oninput="updatePreview()">
-          </div>
-        </div>
-
-        <div class="divider"></div>
-        <p style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Difficulty Filter</p>
-        <div style="font-size:.8rem;color:var(--muted);margin-bottom:8px">Include questions of difficulty:</div>
-        <div style="display:flex;gap:8px;margin-bottom:14px">
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.82rem"><input type="checkbox" id="d1" checked onchange="updatePreview()"> <span class="badge b-d1">1 Easy</span></label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.82rem"><input type="checkbox" id="d2" checked onchange="updatePreview()"> <span class="badge b-d2">2 Medium</span></label>
-          <label style="display:flex;align-items:center;gap:5px;cursor:pointer;font-size:.82rem"><input type="checkbox" id="d3" checked onchange="updatePreview()"> <span class="badge b-d3">3 Hard</span></label>
-        </div>
-
-        <div class="divider"></div>
-        <p style="font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Question Types</p>
-        <div class="tog-row">
-          <div><div class="tog-lbl">Include Managerial Questions</div><div class="tog-sub">Leadership, admin, UN conduct &amp; ethics</div></div>
-          <label class="tog"><input type="checkbox" id="tog-mgmt" checked onchange="updatePreview()"><span class="tog-sl"></span></label>
-        </div>
-        <div class="tog-row">
-          <div><div class="tog-lbl">Include IHL / Humanitarian Law</div><div class="tog-sub">International humanitarian law questions</div></div>
-          <label class="tog"><input type="checkbox" id="tog-ihl" checked onchange="updatePreview()"><span class="tog-sl"></span></label>
-        </div>
-
-        <div class="divider"></div>
-        <div style="display:flex;gap:9px;margin-top:4px">
-          <button class="btn btn-primary btn-lg" id="btn-gen" onclick="generateExam()">Generate Exam</button>
-          <button class="btn btn-sec" id="btn-prev-only" onclick="previewExam()">Preview Header</button>
-        </div>
-        <div id="gen-msg" style="margin-top:10px"></div>
+      <div class="summary" id="summary">
+        <div style="font-weight:600;color:var(--dark);margin-bottom:8px" id="summary-title"></div>
+        <div id="summary-rows"></div>
       </div>
+      <div class="msg" id="load-msg"></div>
     </div>
+  </div>
 
-    <!-- Header preview -->
-    <div class="card" style="margin-bottom:0">
-      <div class="card-h"><span class="card-title">Header Preview</span></div>
-      <div class="card-b" id="preview-body">
-        <p style="font-size:.79rem;color:var(--muted)">Fill in the form to see the exam header preview.</p>
+  <!-- ── STEP 2: CONFIGURE ── -->
+  <div class="step">
+    <div class="step-hdr">
+      <div class="step-num">2</div>
+      <div class="step-title">Configure Exam</div>
+    </div>
+    <div class="step-body">
+      <div class="form-grid">
+
+        <div class="fg">
+          <label>Provider Role <span class="req">*</span></label>
+          <select id="role" onchange="updatePool()">
+            <option value="">— Select Role —</option>
+            <option value="Nurse">Nurse</option>
+            <option value="Doctor">Doctor</option>
+            <option value="Medical Officer">Medical Officer</option>
+            <option value="Medical Coordinator">Medical Coordinator</option>
+            <option value="Lab Tech">Lab Tech</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label>Language <span class="req">*</span></label>
+          <select id="lang" onchange="updatePool()">
+            <option value="en">English</option>
+            <option value="fr">Français</option>
+          </select>
+        </div>
+
+        <div class="fg">
+          <label>Duty Station <span class="req">*</span></label>
+          <input type="text" id="station" placeholder="e.g. Galkayo, Somalia" oninput="updatePool()">
+        </div>
+
+        <div class="fg">
+          <label>Exam Date</label>
+          <input type="date" id="date">
+        </div>
+
+        <div class="fg">
+          <label>Number of Questions</label>
+          <input type="number" id="nq" value="100" min="5" max="150" oninput="updatePool()">
+        </div>
+
+        <div class="fg">
+          <label>Grade / Level</label>
+          <input type="text" id="grade" placeholder="e.g. IPSA9, NOB, G6">
+        </div>
+
       </div>
-    </div>
 
-  </div>
-</div>
+      <hr>
 
-<!-- ══ HISTORY ══ -->
-<div class="page" id="page-history">
-  <div class="ph"><h1>Exam History</h1><p>All generated exams — reprint or remove at any time</p></div>
-  <div class="card" style="margin-bottom:0">
-    <div style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr>
-          <th>Created</th>
-          <th>Role</th>
-          <th>Duty Station</th>
-          <th>Language</th>
-          <th>Questions</th>
-          <th>Grade</th>
-          <th>Actions</th>
-        </tr></thead>
-        <tbody id="hist-tbody"></tbody>
-      </table>
-      <div class="empty" id="hist-empty"><div class="empty-icon">📁</div><div class="empty-text">No exams generated yet.</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SOURCES ══ -->
-<div class="page" id="page-sources">
-  <div class="ph"><h1>SharePoint Sources</h1><p>Connect QBank files from your DOS-DHMOSH SharePoint folder</p></div>
-
-  <div class="alert a-info" style="margin-bottom:18px">
-    <span>ℹ</span>
-    <div>
-      <strong>How to get a SharePoint link:</strong> Open the file in SharePoint → <strong>Share → Copy link</strong> → set to <em>"People with existing access"</em>. Paste below and save. The app fetches the file on demand when you generate an exam for that role — you must be signed into SharePoint in this browser.
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-h">
-      <span class="card-title">QBank File Links</span>
-      <span id="sp-saved-msg" style="font-size:.77rem;color:var(--success);display:none">✓ Saved</span>
-    </div>
-    <div class="card-b">
-      <div id="sp-form"></div>
-      <div style="margin-top:16px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <button class="btn btn-primary" onclick="saveSPLinks()">💾 Save Links</button>
-        <button class="btn btn-sec" onclick="syncAllSP()">⬇ Sync All Now</button>
-        <div id="sp-sync-msg" style="font-size:.81rem;margin-left:4px"></div>
+      <div style="margin-bottom:10px">
+        <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Difficulty</div>
+        <div class="diff-row">
+          <label class="diff-cb d1"><input type="checkbox" id="d1" checked onchange="updatePool()"> 1 — Easy</label>
+          <label class="diff-cb d2"><input type="checkbox" id="d2" checked onchange="updatePool()"> 2 — Medium</label>
+          <label class="diff-cb d3"><input type="checkbox" id="d3" checked onchange="updatePool()"> 3 — Hard</label>
+        </div>
       </div>
+
+      <hr>
+
+      <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Question Types</div>
+      <div class="opts-grid">
+        <label class="opt-card">
+          <input type="checkbox" id="inc-mgmt" checked onchange="updatePool()">
+          <div class="opt-card-text">
+            <div class="opt-card-title">Managerial Questions</div>
+            <div class="opt-card-sub">Leadership, admin, UN conduct & ethics</div>
+          </div>
+        </label>
+        <label class="opt-card">
+          <input type="checkbox" id="inc-ihl" checked onchange="updatePool()">
+          <div class="opt-card-text">
+            <div class="opt-card-title">IHL / Humanitarian Law</div>
+            <div class="opt-card-sub">International humanitarian law questions</div>
+          </div>
+        </label>
+      </div>
+
+      <div class="pool-info" id="pool-info" style="display:none"></div>
+
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-h"><span class="card-title">Load Individual File</span></div>
-    <div class="card-b">
-      <p style="font-size:.81rem;color:var(--muted);margin-bottom:12px">Force a fresh fetch from SharePoint for a specific role — replaces existing questions for that role only.</p>
-      <div id="sp-load-btns" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>
-      <div id="sp-load-msg"></div>
+  <!-- ── STEP 3: GENERATE ── -->
+  <div class="step">
+    <div class="step-hdr">
+      <div class="step-num">3</div>
+      <div class="step-title">Generate</div>
+    </div>
+    <div class="step-body">
+      <p style="font-size:0.83rem;color:var(--muted);margin-bottom:16px">
+        Generates two Word documents: an <strong>exam paper</strong> (questions only) and a separate <strong>answer key</strong> (with correct answers marked). Both download automatically.
+      </p>
+      <button class="gen-btn" id="gen-btn" onclick="generate()">
+        📄 Generate Exam + Answer Key
+      </button>
+      <div class="msg" id="gen-msg"></div>
     </div>
   </div>
+
 </div>
 
-</main>
-</div>
-
-<!-- ══ EXAM MODAL ══ -->
-<div class="modal-bg" id="exam-modal" style="display:none" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
-    <div class="modal-hd">
-      <span class="modal-title" id="modal-title">Exam Preview</span>
-      <button class="modal-x" onclick="closeModal()">×</button>
-    </div>
-    <div class="modal-bd" id="modal-bd"></div>
-    <div class="modal-ft">
-      <button class="btn btn-sec" onclick="closeModal()">Close</button>
-      <button class="btn btn-primary" onclick="printExam()">🖨 Print / Save as PDF</button>
-    </div>
-  </div>
-</div>
+<footer>
+  UN Medical Examination Programme · DOS-DHMOSH · Questions are randomly selected each time
+</footer>
 
 <script>
-// ═══════════════════════════════════════════════════════
-// STATE — all persisted to localStorage
-// ═══════════════════════════════════════════════════════
-let lang = 'en';
-
-// Load questions safely — handle oversized localStorage
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
 let questions = [];
-try {
-  const raw = localStorage.getItem('un3_q');
-  if (raw) questions = JSON.parse(raw);
-} catch(e) { console.warn('QBank load error:', e); }
 
-let exams = [];
-try {
-  const raw = localStorage.getItem('un3_exams');
-  if (raw) exams = JSON.parse(raw);
-} catch(e) {}
+const MGMT_CATS = [
+  'leadership','management','un competenc','professionalism','accountability',
+  'code of conduct','code of ethics','medical ethics','integrity',
+  'emotional intelligence','performance appraisal','health systems & admin',
+  'humanitarian aid','humanitarian intervention'
+];
+const IHL_CATS = [
+  'international humanitarian law','ihl','humanitarian law',
+  'droit international humanitaire'
+];
 
-let spLinks = {};
-try {
-  const raw = localStorage.getItem('un3_sp');
-  if (raw) spLinks = JSON.parse(raw);
-} catch(e) {}
+const ROLE_BADGE = {
+  'Nurse':'b-blue', 'Doctor':'b-green',
+  'Medical Officer':'b-gold', 'Medical Coordinator':'b-purple', 'Lab Tech':'b-gray'
+};
 
-let spSyncTimes = {};
-try {
-  const raw = localStorage.getItem('un3_sptime');
-  if (raw) spSyncTimes = JSON.parse(raw);
-} catch(e) {}
-
-// Active filters for browse
-let browseRole = 'All';
-let browseDiff = new Set(['1','2','3']);
-
-// Save questions safely — warn if quota exceeded
-function saveQuestions() {
-  try {
-    localStorage.setItem('un3_q', JSON.stringify(questions));
-  } catch(e) {
-    showMsg('upload-msg', 'warn', '⚠ Questions loaded but could not be saved to browser storage (file too large). They will be available this session only.');
+const ROLE_TITLES = {
+  en: {
+    'Nurse': 'Nurse',
+    'Doctor': 'Clinic Physician / Occupational Health and Healthcare Quality Officer',
+    'Medical Officer': 'Medical Officer / Occupational Health and Healthcare Quality Officer',
+    'Medical Coordinator': 'Medical Coordinator',
+    'Lab Tech': 'Laboratory Technician',
+  },
+  fr: {
+    'Nurse': 'Infirmier(ère)',
+    'Doctor': 'Médecin Clinicien / Officier de Santé au Travail et Qualité des Soins',
+    'Medical Officer': 'Médecin / Officier de Santé au Travail et Qualité des Soins',
+    'Medical Coordinator': 'Coordinateur(trice) Médical(e)',
+    'Lab Tech': 'Technicien(ne) de Laboratoire',
   }
+};
+
+// ════════════════════════════════════════════════
+// DRAG & DROP + FILE LOAD
+// ════════════════════════════════════════════════
+function onDragOver(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.add('dragging');
+}
+function onDragLeave(e) {
+  document.getElementById('drop-zone').classList.remove('dragging');
+}
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('dragging');
+  const file = e.dataTransfer.files[0];
+  if (file) loadFile(file);
+}
+function handleFile(e) {
+  const file = e.target.files[0];
+  e.target.value = '';
+  if (file) loadFile(file);
 }
 
-// ═══════════════════════════════════════════════════════
-// SP FILES CONFIG
-// ═══════════════════════════════════════════════════════
-const SP_FILES = [
-  { key:'physician',   label:'Master_QBank_Physician',    role:'Doctor',              badge:'b-green'  },
-  { key:'medofficer',  label:'Master_QBank_MedOfficer',   role:'Medical Officer',     badge:'b-gold'   },
-  { key:'nurse',       label:'Master_QBank_Nurse',        role:'Nurse',               badge:'b-blue'   },
-  { key:'tech',        label:'Master_QBank_Tech',         role:'Lab Tech',            badge:'b-gray'   },
-  { key:'coordinator', label:'Master_QBank_Coordinator',  role:'Medical Coordinator', badge:'b-purple' },
-];
-const ROLE_TO_KEY = Object.fromEntries(SP_FILES.map(f => [f.role, f.key]));
+function loadFile(file) {
+  if (!file.name.match(/\.(xlsx|xls)$/i)) {
+    showMsg('load-msg', 'err', '✗ Please upload an Excel file (.xlsx or .xls)');
+    return;
+  }
+  showMsg('load-msg', 'info', '⟳ Reading file…');
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const wb = XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      if (!rows.length) throw new Error('File contains no data rows.');
 
-// ═══════════════════════════════════════════════════════
-// CATEGORY CLASSIFIERS
-// ═══════════════════════════════════════════════════════
-const MGMT_CATS = [
-  'leadership','management','manager','un competenc','professionalism','accountability',
-  'code of conduct','code of ethics','humanitarian law','ihl','icrc','red cross',
-  'ethics & un','medical ethics','integrity','emotional intelligence',
-  'performance appraisal','health systems & admin'
-];
-const IHL_CATS = ['international humanitarian law','ihl','humanitarian law','droit international humanitaire'];
+      // Normalize column names
+      const norm = rows.map(r => {
+        const n = {};
+        for (const k of Object.keys(r)) n[k.trim()] = typeof r[k] === 'string' ? r[k].trim() : r[k];
+        return n;
+      }).filter(r => r.Role && (r.Question_EN || r.Question_FR));
 
+      if (!norm.length) throw new Error('No valid question rows found. Check that Role and Question_EN columns are present.');
+
+      questions = norm;
+      renderLoaded(file.name);
+      showMsg('load-msg', 'ok', `✓ Loaded <strong>${norm.length}</strong> questions from <em>${file.name}</em>`);
+      updatePool();
+    } catch(err) {
+      showMsg('load-msg', 'err', '✗ ' + err.message);
+    }
+  };
+  reader.onerror = () => showMsg('load-msg', 'err', '✗ Could not read file.');
+  reader.readAsArrayBuffer(file);
+}
+
+function renderLoaded(filename) {
+  const zone = document.getElementById('drop-zone');
+  zone.classList.add('loaded');
+  document.getElementById('drop-icon').textContent = '✅';
+  document.getElementById('drop-main').textContent = filename;
+  document.getElementById('drop-sub').textContent = 'Click or drag to replace';
+
+  // Summary
+  const rc = {};
+  const dc = {'1':0,'2':0,'3':0,'other':0};
+  questions.forEach(q => {
+    rc[q.Role || 'Unknown'] = (rc[q.Role||'Unknown']||0) + 1;
+    const d = String(q.Difficulty || q['Dificulty (1-3)'] || '');
+    if (['1','2','3'].includes(d)) dc[d]++; else dc.other++;
+  });
+
+  document.getElementById('summary-title').textContent = `${questions.length} questions loaded`;
+  document.getElementById('summary-rows').innerHTML = [
+    Object.entries(rc).map(([role, cnt]) =>
+      `<div class="summary-row"><span class="badge ${ROLE_BADGE[role]||'b-gray'}">${role}</span><span style="color:var(--muted)">${cnt} questions</span></div>`
+    ).join(''),
+    `<div class="summary-row" style="margin-top:6px;gap:6px">
+      <span class="badge b-d1">Easy: ${dc['1']}</span>
+      <span class="badge b-d2">Medium: ${dc['2']}</span>
+      <span class="badge b-d3">Hard: ${dc['3']}</span>
+      ${dc.other ? `<span class="badge b-gray">Unrated: ${dc.other}</span>` : ''}
+    </div>`
+  ].join('');
+  document.getElementById('summary').classList.add('show');
+}
+
+// ════════════════════════════════════════════════
+// POOL CALCULATION
+// ════════════════════════════════════════════════
 function isMgmt(q) {
-  const s = ((q.Category||'')+(q.Question_EN||'')).toLowerCase();
+  const s = ((q.Category||'') + ' ' + (q.Question_EN||'')).toLowerCase();
   return MGMT_CATS.some(k => s.includes(k));
 }
 function isIHL(q) {
@@ -545,219 +578,14 @@ function isIHL(q) {
   return IHL_CATS.some(k => s.includes(k));
 }
 
-// ═══════════════════════════════════════════════════════
-// NAVIGATION
-// ═══════════════════════════════════════════════════════
-function nav(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('on'));
-  document.getElementById('page-' + name).classList.add('on');
-  document.getElementById('nav-' + name).classList.add('on');
-  if (name === 'upload')   { renderBankSummary(); }
-  if (name === 'browse')   { renderRolePills(); renderDiffPills(); renderBrowse(); }
-  if (name === 'generate') { updatePreview(); }
-  if (name === 'history')  { renderHistory(); }
-  if (name === 'sources')  { renderSPForm(); renderSPLoadBtns(); }
-}
-
-// ═══════════════════════════════════════════════════════
-// LANGUAGE
-// ═══════════════════════════════════════════════════════
-function setLang(l) {
-  lang = l;
-  document.getElementById('btn-en').classList.toggle('on', l === 'en');
-  document.getElementById('btn-fr').classList.toggle('on', l === 'fr');
-  updatePreview();
-  renderBrowse();
-  renderHistory();
-}
-
-// ═══════════════════════════════════════════════════════
-// UPLOAD
-// ═══════════════════════════════════════════════════════
-function handleUpload(e) {
-  const file = e.target.files[0];
-  if (!file) return;
-  // Reset input so same file can be re-uploaded
-  e.target.value = '';
-  const reader = new FileReader();
-  reader.onload = ev => {
-    try {
-      const data = new Uint8Array(ev.target.result);
-      const wb = XLSX.read(data, { type: 'array' });
-      const ws = wb.Sheets[wb.SheetNames[0]];
-      const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-      if (!rows.length) throw new Error('File appears to be empty — no data rows found');
-
-      // Normalize column names (trim whitespace)
-      const normalised = rows.map(r => {
-        const n = {};
-        for (const k of Object.keys(r)) n[k.trim()] = typeof r[k] === 'string' ? r[k].trim() : r[k];
-        return n;
-      }).filter(r => r.Role && (r.Question_EN || r.Question_FR)); // skip blank rows
-
-      if (!normalised.length) throw new Error('No valid question rows found — check that Role and Question_EN columns are present');
-
-      // Merge by role: remove existing questions for each role found in this file, then add new
-      const rolesInFile = [...new Set(normalised.map(r => r.Role))];
-      questions = questions.filter(q => !rolesInFile.includes(q.Role));
-      questions = questions.concat(normalised);
-      saveQuestions();
-
-      const roleBreakdown = rolesInFile.map(r => {
-        const cnt = normalised.filter(q => q.Role === r).length;
-        return `${r} (${cnt})`;
-      }).join(', ');
-
-      showMsg('upload-msg', 'ok', `✓ Loaded <strong>${normalised.length}</strong> questions from <em>${file.name}</em><br><span style="font-size:.8rem">Roles updated: ${roleBreakdown}</span>`);
-      renderBankSummary();
-    } catch(err) {
-      showMsg('upload-msg', 'warn', `✗ ${err.message}`);
-    }
-  };
-  reader.onerror = () => showMsg('upload-msg', 'warn', '✗ Could not read file');
-  reader.readAsArrayBuffer(file);
-}
-
-function clearAll() {
-  if (!confirm('Clear all loaded questions? This cannot be undone.')) return;
-  questions = [];
-  saveQuestions();
-  renderBankSummary();
-  showMsg('upload-msg', 'warn', 'Question pool cleared.');
-}
-
-function renderBankSummary() {
-  const card = document.getElementById('bank-card');
-  const body = document.getElementById('bank-body');
-  if (!questions.length) { card.style.display = 'none'; return; }
-  card.style.display = 'block';
-  const rc = {}, dc = { '1': 0, '2': 0, '3': 0, other: 0 };
-  questions.forEach(q => {
-    rc[q.Role || 'Unknown'] = (rc[q.Role || 'Unknown'] || 0) + 1;
-    const d = String(q.Difficulty || q['Dificulty (1-3)'] || '');
-    if (d === '1' || d === '2' || d === '3') dc[d]++;
-    else dc.other++;
-  });
-  const roleC = { Nurse:'b-blue', Doctor:'b-green', 'Medical Officer':'b-gold', 'Medical Coordinator':'b-purple', 'Lab Tech':'b-gray' };
-  body.innerHTML = `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
-      <strong style="font-size:1rem;color:var(--un-dark)">${questions.length} questions</strong>
-      <span class="badge b-d1">Easy: ${dc['1']}</span>
-      <span class="badge b-d2">Medium: ${dc['2']}</span>
-      <span class="badge b-d3">Hard: ${dc['3']}</span>
-      ${dc.other ? `<span class="badge b-gray">Unrated: ${dc.other}</span>` : ''}
-    </div>
-    ${Object.entries(rc).map(([role, cnt]) => `
-      <div style="display:flex;align-items:center;gap:10px;margin-bottom:9px">
-        <span class="badge ${roleC[role] || 'b-gray'}" style="width:155px;text-align:center">${role}</span>
-        <div class="prog" style="flex:1"><div class="prog-fill" style="width:${Math.round(cnt / questions.length * 100)}%"></div></div>
-        <span style="font-size:.81rem;font-weight:600;width:52px;text-align:right">${cnt} Qs</span>
-      </div>`).join('')}`;
-}
-
-function downloadTemplate() {
-  const h = ['Role','Category','Difficulty','Question_EN','Question_FR','A_EN','B_EN','C_EN','D_EN','A_FR','B_FR','C_FR','D_FR','Answer','Explanation_EN','Explanation_FR'];
-  const rows = [
-    ['Nurse','Emergency / Triage',1,'A patient presents with chest pain radiating to the left arm. What is the priority action?','Un patient présente des douleurs thoraciques irradiant vers le bras gauche. Quelle est l\'action prioritaire ?','Administer aspirin','Perform a 12-lead ECG immediately','Take vital signs and wait','Call the physician','Administrer de l\'aspirine','Effectuer un ECG 12 dérivations immédiatement','Prendre les signes vitaux et attendre','Appeler le médecin','B','Immediate 12-lead ECG is critical to rule out STEMI.','L\'ECG 12 dérivations immédiat est critique.'],
-    ['Doctor','Pharmacology',2,'First-line treatment for anaphylaxis in adults?','Traitement de première ligne pour l\'anaphylaxie chez l\'adulte ?','Antihistamine','Corticosteroid','Epinephrine 0.3mg IM','Oxygen only','Antihistaminique','Corticostéroïde','Épinéphrine 0.3mg IM','Oxygène seulement','C','Epinephrine IM is the only immediate treatment for anaphylaxis.','L\'épinéphrine IM est le seul traitement immédiat.'],
-    ['Medical Officer','International Humanitarian Law',3,'What are the three main sources of IHL?','Quelles sont les trois principales sources du DIH ?','Geneva Conventions and Protocols','Hague Conventions','Universal Declaration of Human Rights','All of the above','Conventions de Genève','Conventions de La Haye','DUDH','Tout ce qui précède','D','IHL derives from Geneva, Hague and UDHR.','Le DIH découle des Conventions de Genève, de La Haye et de la DUDH.'],
-    ['Medical Coordinator','Leadership & Management',1,'What characterizes a transformational leader?','Qu\'est-ce qui caractérise un leader transformationnel ?','Focuses on rules','Inspires with shared vision','Manages budgets strictly','Delegates all decisions','Se concentre sur les règles','Inspire avec vision partagée','Gère strictement les budgets','Délègue toutes les décisions','B','Transformational leaders inspire through shared vision.','Les leaders transformationnels inspirent à travers une vision partagée.'],
-    ['Lab Tech','Equipment / Sterilization',2,'What SAL is required for surgical instruments?','Quel SAL est requis pour les instruments chirurgicaux ?','10⁻²','10⁻⁴','10⁻⁶','10⁻⁸','10⁻²','10⁻⁴','10⁻⁶','10⁻⁸','C','SAL 10⁻⁶ is the WHO standard for surgical instrument sterilization.','SAL 10⁻⁶ est la norme OMS.'],
-  ];
-  const ws = XLSX.utils.aoa_to_sheet([h, ...rows]);
-  ws['!cols'] = h.map((_,i) => ({ wch: i < 3 ? 18 : 30 }));
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'QBank');
-  XLSX.writeFile(wb, 'UN_QBank_Template.xlsx');
-}
-
-// ═══════════════════════════════════════════════════════
-// BROWSE
-// ═══════════════════════════════════════════════════════
-function renderRolePills() {
-  const roles = ['All', ...new Set(questions.map(q => q.Role || 'Unknown'))];
-  document.getElementById('role-pills').innerHTML = roles.map(r =>
-    `<span class="r-pill${r === browseRole ? ' on' : ''}" onclick="setBrowseRole('${r}')">${r}</span>`
-  ).join('');
-}
-
-function renderDiffPills() {
-  document.getElementById('diff-pills').innerHTML = ['1','2','3'].map(d => `
-    <span class="diff-pill${browseDiff.has(d) ? ' on-' + d : ''}" onclick="toggleDiff('${d}')">
-      ${d === '1' ? '● Easy' : d === '2' ? '● Medium' : '● Hard'}
-    </span>`).join('');
-}
-
-function setBrowseRole(r) { browseRole = r; renderRolePills(); renderBrowse(); }
-function toggleDiff(d) {
-  if (browseDiff.has(d)) { if (browseDiff.size > 1) browseDiff.delete(d); }
-  else browseDiff.add(d);
-  renderDiffPills();
-  renderBrowse();
-}
-
-function renderBrowse() {
-  const search = (document.getElementById('q-search') || {}).value || '';
-  const qf = lang === 'fr' ? 'Question_FR' : 'Question_EN';
-  let filtered = questions;
-  if (browseRole !== 'All') filtered = filtered.filter(q => q.Role === browseRole);
-  filtered = filtered.filter(q => {
-    const d = String(q.Difficulty || q['Dificulty (1-3)'] || '1');
-    return browseDiff.has(d) || (d === '' && browseDiff.has('1'));
-  });
-  if (search) {
-    const s = search.toLowerCase();
-    filtered = filtered.filter(q => JSON.stringify(q).toLowerCase().includes(s));
-  }
-
-  const tbody = document.getElementById('browse-tbody');
-  const empty = document.getElementById('browse-empty');
-  if (!filtered.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-  empty.style.display = 'none';
-
-  const rc = { Nurse:'b-blue', Doctor:'b-green', 'Medical Officer':'b-gold', 'Medical Coordinator':'b-purple', 'Lab Tech':'b-gray' };
-  const dc = { '1':'b-d1', '2':'b-d2', '3':'b-d3' };
-  tbody.innerHTML = filtered.slice(0, 400).map((q, i) => {
-    const d = String(q.Difficulty || q['Dificulty (1-3)'] || '');
-    return `<tr>
-      <td style="color:var(--muted);font-size:.72rem">${i+1}</td>
-      <td><span class="badge ${rc[q.Role] || 'b-gray'}">${q.Role || '?'}</span></td>
-      <td style="font-size:.76rem;color:var(--muted);max-width:130px">${(q.Category || '—').substring(0, 32)}</td>
-      <td><span class="badge ${dc[d] || 'b-gray'}">${d || '—'}</span></td>
-      <td style="font-size:.81rem;max-width:310px">${(q[qf] || q.Question_EN || '').substring(0, 95)}${(q[qf] || '').length > 95 ? '…' : ''}</td>
-      <td><span class="badge b-green">${q.Answer || '?'}</span></td>
-    </tr>`;
-  }).join('');
-}
-
-// ═══════════════════════════════════════════════════════
-// GENERATE
-// ═══════════════════════════════════════════════════════
-const ROLE_TITLES = {
-  en: {
-    Nurse: 'Nurse',
-    Doctor: 'Clinic Physician / Occupational Health and Healthcare Quality Officer',
-    'Medical Officer': 'Medical Officer / Occupational Health and Healthcare Quality Officer',
-    'Medical Coordinator': 'Medical Coordinator',
-    'Lab Tech': 'Laboratory Technician',
-  },
-  fr: {
-    Nurse: 'Infirmier(ère)',
-    Doctor: 'Médecin Clinicien / Officier de Santé au Travail et Qualité des Soins',
-    'Medical Officer': 'Médecin / Officier de Santé au Travail et Qualité des Soins',
-    'Medical Coordinator': 'Coordinateur(trice) Médical(e)',
-    'Lab Tech': 'Technicien(ne) de Laboratoire',
-  }
-};
-
 function getPool() {
-  const role   = document.getElementById('g-role').value;
-  const incD1  = document.getElementById('d1').checked;
-  const incD2  = document.getElementById('d2').checked;
-  const incD3  = document.getElementById('d3').checked;
-  const incMgmt= document.getElementById('tog-mgmt').checked;
-  const incIHL = document.getElementById('tog-ihl').checked;
+  const role    = document.getElementById('role').value;
+  const incD1   = document.getElementById('d1').checked;
+  const incD2   = document.getElementById('d2').checked;
+  const incD3   = document.getElementById('d3').checked;
+  const incMgmt = document.getElementById('inc-mgmt').checked;
+  const incIHL  = document.getElementById('inc-ihl').checked;
+
   let pool = questions.filter(q => !role || q.Role === role);
   pool = pool.filter(q => {
     const d = String(q.Difficulty || q['Dificulty (1-3)'] || '1');
@@ -771,462 +599,381 @@ function getPool() {
   return pool;
 }
 
-function updatePreview() {
-  const role    = document.getElementById('g-role').value;
-  const station = document.getElementById('g-station').value.trim();
-  const date    = document.getElementById('g-date').value;
-  const nq      = document.getElementById('g-nq').value;
-  const grade   = document.getElementById('g-grade').value.trim();
-  const isFr    = document.getElementById('g-lang').value === 'fr';
-  const body    = document.getElementById('preview-body');
-
-  if (!role && !station) {
-    body.innerHTML = '<p style="font-size:.79rem;color:var(--muted)">Fill in the form to see the exam header preview.</p>';
-    return;
-  }
-
-  const dateStr = date
-    ? new Date(date + 'T12:00:00').toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
-    : '________________';
-
+function updatePool() {
+  if (!questions.length) return;
   const pool = getPool();
-  const spKey = ROLE_TO_KEY[role];
-  const hasLink = spKey && spLinks[spKey];
-  const lastSync = spKey && spSyncTimes[spKey];
-
-  body.innerHTML = `
-    <div style="font-family:Arial,sans-serif;font-size:8.5pt;border:1px solid var(--border);padding:12px;border-radius:4px;background:#fafafa;line-height:1.4">
-      <div style="display:flex;justify-content:space-between;padding-bottom:8px;border-bottom:1.5px solid #000;margin-bottom:10px">
-        <div>
-          <div style="font-weight:bold">${isFr ? 'Programme des Nations Unies pour le Développement' : 'United Nations Development Programme'}</div>
-          <div style="font-size:7pt;font-style:italic;color:#555">${isFr ? 'Des vies améliorées. Des nations résilientes.' : 'Empowered lives. Resilient nations.'}</div>
-        </div>
-        <div style="text-align:right;font-size:7.5pt"><strong>${isFr ? 'Date :' : 'Date:'}</strong> ${dateStr}</div>
-      </div>
-      <div style="text-align:center">
-        <div style="font-weight:bold;text-decoration:underline;margin-bottom:3px">${isFr ? 'QUESTIONS DE TEST ÉCRIT' : 'WRITTEN TEST QUESTIONS'}</div>
-        ${role ? `<div style="font-weight:bold">UN Clinic ${(ROLE_TITLES[isFr?'fr':'en'][role]||role)}</div>` : ''}
-        ${station ? `<div>${station}</div>` : ''}
-        <div style="font-weight:bold">${isFr ? 'DURÉE : 2 HEURES' : 'DURATION: 2 HOURS'}</div>
-        ${grade ? `<div style="text-decoration:underline">${grade}</div>` : ''}
-      </div>
-      <div style="margin-top:8px;padding-top:7px;border-top:1px solid #ddd;font-size:7pt;color:var(--muted)">
-        ${pool.length} ${isFr ? 'questions disponibles' : 'questions available'} · ${nq} ${isFr ? 'seront sélectionnées' : 'will be selected'}
-        ${hasLink ? `<br>🔗 ${isFr ? 'Lien SharePoint configuré' : 'SharePoint link configured'}${lastSync ? ' · Last sync: ' + lastSync : ''}` : (spKey ? `<br>⚠ ${isFr ? 'Aucun lien SharePoint' : 'No SharePoint link — upload manually'}` : '')}
-      </div>
-    </div>`;
+  const nq   = parseInt(document.getElementById('nq').value) || 100;
+  const el   = document.getElementById('pool-info');
+  el.style.display = 'block';
+  const will = Math.min(nq, pool.length);
+  el.innerHTML = pool.length
+    ? `<strong>${pool.length}</strong> questions match your filters — <strong>${will}</strong> will be randomly selected`
+    : '<strong style="color:var(--red)">⚠ No questions match these filters. Adjust role or difficulty settings.</strong>';
 }
 
-async function generateExam() {
-  const role    = document.getElementById('g-role').value;
-  const examLang= document.getElementById('g-lang').value;
-  const station = document.getElementById('g-station').value.trim();
-  const date    = document.getElementById('g-date').value;
-  const nqRaw   = parseInt(document.getElementById('g-nq').value) || 100;
-  const grade   = document.getElementById('g-grade').value.trim();
-  const isFr    = examLang === 'fr';
-
+// ════════════════════════════════════════════════
+// GENERATE
+// ════════════════════════════════════════════════
+async function generate() {
   // Validation
-  if (!role)    { showMsg('gen-msg', 'warn', isFr ? '⚠ Veuillez sélectionner un rôle.' : '⚠ Please select a provider role.'); return; }
-  if (!station) { showMsg('gen-msg', 'warn', isFr ? '⚠ Veuillez entrer un lieu d\'affectation.' : '⚠ Please enter a duty station.'); return; }
-  showMsg('gen-msg', '', '');
+  const role    = document.getElementById('role').value;
+  const lang    = document.getElementById('lang').value;
+  const station = document.getElementById('station').value.trim();
+  const dateVal = document.getElementById('date').value;
+  const nqRaw   = parseInt(document.getElementById('nq').value) || 100;
+  const grade   = document.getElementById('grade').value.trim();
+  const isFr    = lang === 'fr';
 
-  // Auto-fetch from SharePoint if no questions for this role yet
-  const spKey = ROLE_TO_KEY[role];
-  const hasLocal = questions.some(q => q.Role === role);
-  if (!hasLocal && spKey && spLinks[spKey]) {
-    const btn = document.getElementById('btn-gen');
-    btn.disabled = true;
-    btn.textContent = isFr ? '⟳ Chargement…' : '⟳ Loading from SharePoint…';
-    await fetchSPFile(spKey, true);
-    btn.disabled = false;
-    btn.textContent = isFr ? 'Générer l\'Examen' : 'Generate Exam';
-  }
+  if (!questions.length) { showMsg('gen-msg','err','⚠ Load a QBank file first (Step 1).'); return; }
+  if (!role)             { showMsg('gen-msg','err','⚠ Select a provider role.'); return; }
+  if (!station)          { showMsg('gen-msg','err','⚠ Enter a duty station.'); return; }
 
   const pool = getPool();
-  if (!pool.length) {
-    const msg = spKey && spLinks[spKey]
-      ? (isFr ? '⚠ Impossible de charger depuis SharePoint. Vérifiez le lien.' : '⚠ Could not load from SharePoint. Check the link in Sources.')
-      : (isFr ? '⚠ Aucune question pour ce rôle. Importez une QBank.' : '⚠ No questions for this role. Upload a QBank or configure a SharePoint link.');
-    showMsg('gen-msg', 'warn', msg);
-    return;
-  }
+  if (!pool.length) { showMsg('gen-msg','err','⚠ No questions match your filters. Adjust settings and try again.'); return; }
 
-  // Shuffle and select
+  // Select questions
   const shuffled = [...pool].sort(() => Math.random() - 0.5);
   const selected = shuffled.slice(0, Math.min(nqRaw, shuffled.length));
 
-  const exam = {
-    id: 'ex_' + Date.now(),
-    role, lang: examLang, station, date, grade,
-    nq: selected.length,
-    questions: selected,
-    created: new Date().toISOString(),
-  };
-
-  exams.push(exam);
-  try { localStorage.setItem('un3_exams', JSON.stringify(exams)); } catch(e) {}
-
-  openModal(exam);
-}
-
-function previewExam() {
-  // Build a fake exam with no questions just to show header
-  const role    = document.getElementById('g-role').value || 'Doctor';
-  const station = document.getElementById('g-station').value.trim() || '[Duty Station]';
-  const date    = document.getElementById('g-date').value;
-  const grade   = document.getElementById('g-grade').value.trim();
-  const examLang= document.getElementById('g-lang').value;
-  const fakeExam = { id: 'preview', role, lang: examLang, station, date, grade, nq: 0, questions: [], created: new Date().toISOString() };
-  openModal(fakeExam, true);
-}
-
-// ═══════════════════════════════════════════════════════
-// EXAM DOCUMENT
-// ═══════════════════════════════════════════════════════
-function buildDoc(exam) {
-  const isFr = exam.lang === 'fr';
-  const roleLabel = (ROLE_TITLES[isFr ? 'fr' : 'en'][exam.role] || exam.role);
-  const dateStr = exam.date
-    ? new Date(exam.date + 'T12:00:00').toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
-    : '________________';
-  const qf = isFr ? 'Question_FR' : 'Question_EN';
-
-  const qHtml = exam.questions.map((q, i) => {
-    const qText = q[qf] || q.Question_EN || '';
-    const opts = ['A','B','C','D'].map(L => {
-      const f = `${L}_${isFr ? 'FR' : 'EN'}`;
-      const txt = q[f] || q[`${L}_EN`] || '';
-      return txt ? `<div class="doc-opt"><strong>${L}.</strong> ${txt}</div>` : '';
-    }).join('');
-    return `<div class="doc-q">
-      <div class="doc-qtext"><span class="doc-qnum">${i+1}.</span> ${qText}</div>
-      <div class="doc-opts">${opts}</div>
-    </div>`;
-  }).join('');
-
-  const b1 = isFr
-    ? 'Le temps alloué est de <u>deux (2) heures</u>. Il vise à évaluer vos compétences techniques dans des paramètres stricts.'
-    : 'The time allocated is <u>two (2) hours</u>. It is meant to ascertain your technical skills written within tight parameters.';
-  const b2 = isFr ? 'Vous êtes encouragé(e) à répondre à toutes les questions au mieux de vos capacités.' : 'You are encouraged to ensure you attempt all the questions to the best of your ability.';
-  const b3 = (isFr ? 'Nombre total de points pour l\'examen : ' : 'Total number of points for the exam: ') + exam.nq + '.';
-  const b4 = isFr ? 'Points par question : 1,0' : 'Points per question: 1.0';
-  const b5 = isFr
-    ? 'Clarification sur l\'utilisation de documents et d\'outils : Les candidats ne sont pas autorisés à consulter des documents ni à utiliser des outils d\'IA pendant le test.'
-    : 'Clarification on document and tool use: Candidates are not permitted to consult any documents or use AI tools during the test.';
-
-  const footer = `UN Clinic ${exam.station} – ${exam.grade || 'Written Test'} – ${isFr ? 'Test Écrit' : 'Written Test'}`;
-
-  return `<div class="exam-doc" id="exam-print-target">
-    <div class="doc-hdr">
-      <div class="doc-logo-wrap">
-        <div class="doc-undp-mark">
-          <div class="doc-undp-un">UN</div>
-          <div class="doc-undp-dp">DP</div>
-        </div>
-        <div>
-          <div class="doc-org">${isFr ? 'Programme des Nations Unies pour le Développement' : 'United Nations Development Programme'}</div>
-          <div class="doc-tagline">${isFr ? 'Des vies améliorées. Des nations résilientes.' : 'Empowered lives. Resilient nations.'}</div>
-        </div>
-      </div>
-      <div class="doc-date"><strong>${isFr ? 'Date :' : 'Date:'}</strong> ${dateStr}</div>
-    </div>
-    <div class="doc-titles">
-      <div class="doc-label">${isFr ? 'QUESTIONS DE TEST ÉCRIT' : 'WRITTEN TEST QUESTIONS'}</div>
-      <div class="doc-position">UN Clinic ${exam.role} / ${roleLabel}</div>
-      <div class="doc-station">${exam.station}</div>
-      <div class="doc-duration">${isFr ? 'DURÉE : 2 HEURES' : 'DURATION: 2 HOURS'}</div>
-      ${exam.grade ? `<div class="doc-grade">${exam.grade}</div>` : ''}
-    </div>
-    <hr class="doc-rule"/>
-    <div class="doc-conf">${isFr ? 'STRICTEMENT CONFIDENTIEL' : 'STRICTLY CONFIDENTIAL'}</div>
-    <div class="doc-instr">${isFr ? 'Veuillez lire attentivement les instructions avant de commencer le test :' : 'Please read the instructions carefully before beginning the test:'}</div>
-    <ul class="doc-bullets">
-      <li>${b1}</li><li>${b2}</li><li>${b3}</li><li>${b4}</li><li>${b5}</li>
-    </ul>
-    <hr class="doc-sep"/>
-    ${exam.questions.length ? `<div class="doc-qs">${qHtml}</div>` : '<p style="color:#999;font-style:italic;text-align:center;padding:20px 0">[ Header preview only — no questions selected ]</p>'}
-    <hr class="doc-footer-hr"/>
-    <div class="doc-footer-txt">${footer}</div>
-  </div>`;
-}
-
-// ═══════════════════════════════════════════════════════
-// MODAL
-// ═══════════════════════════════════════════════════════
-let _activeExam = null;
-
-function openModal(exam, headerOnly = false) {
-  _activeExam = exam;
-  document.getElementById('modal-title').textContent =
-    (exam.lang === 'fr' ? 'Aperçu de l\'Examen' : 'Exam Preview') +
-    ` — ${exam.role}, ${exam.station}`;
-  document.getElementById('modal-bd').innerHTML = buildDoc(exam);
-  document.getElementById('exam-modal').style.display = 'flex';
-}
-
-function closeModal() {
-  document.getElementById('exam-modal').style.display = 'none';
-}
-
-function printExam() {
-  if (!_activeExam) return;
-  const content = document.getElementById('modal-bd').innerHTML;
-  const isFr = _activeExam.lang === 'fr';
-
-  // Build complete standalone print page
-  const printPage = `<!DOCTYPE html>
-<html lang="${_activeExam.lang}">
-<head>
-<meta charset="UTF-8">
-<title>UN Exam – ${_activeExam.role} – ${_activeExam.station}</title>
-<style>
-  @page { size: A4; margin: 22mm 20mm 18mm 20mm; }
-  body { font-family: Arial, Helvetica, sans-serif; font-size: 10.5pt; color: #000; background: white; margin: 0; }
-  .doc-hdr { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 14px; border-bottom: 2px solid #000; margin-bottom: 18px; }
-  .doc-logo-wrap { display: flex; align-items: flex-start; gap: 10px; }
-  .doc-undp-un { font-size: 26pt; font-weight: 900; color: #009EDB; letter-spacing: -1px; line-height: 1; }
-  .doc-undp-dp { font-size: 7pt; letter-spacing: 4px; color: #009EDB; }
-  .doc-org { font-size: 10pt; font-weight: bold; }
-  .doc-tagline { font-size: 7.5pt; font-style: italic; color: #555; margin-top: 2px; }
-  .doc-date { font-size: 10pt; text-align: right; }
-  .doc-titles { text-align: center; margin: 16px 0 12px; }
-  .doc-label { font-size: 11pt; font-weight: bold; text-decoration: underline; margin-bottom: 5px; }
-  .doc-position { font-size: 10.5pt; font-weight: bold; margin-bottom: 2px; }
-  .doc-station, .doc-duration { font-size: 10.5pt; margin-bottom: 2px; }
-  .doc-duration { font-weight: bold; }
-  .doc-grade { font-size: 10.5pt; text-decoration: underline; margin-bottom: 2px; }
-  .doc-rule { border: none; border-top: 1px solid #aaa; margin: 12px 0; }
-  .doc-sep { border: none; border-top: 1px dashed #999; margin: 12px 0; }
-  .doc-conf { font-size: 10.5pt; font-weight: bold; margin-bottom: 6px; }
-  .doc-instr { font-size: 10pt; margin-bottom: 6px; }
-  .doc-bullets { padding-left: 22px; font-size: 10pt; margin-bottom: 8px; }
-  .doc-bullets li { margin-bottom: 4px; }
-  .doc-qs { margin-top: 16px; }
-  .doc-q { margin-bottom: 20px; page-break-inside: avoid; }
-  .doc-qtext { font-size: 10.5pt; margin-bottom: 7px; }
-  .doc-qnum { font-weight: bold; }
-  .doc-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 3px 20px; padding-left: 16px; }
-  .doc-opt { font-size: 10pt; }
-  .doc-footer-hr { border: none; border-top: 1px solid #aaa; margin-top: 28px; }
-  .doc-footer-txt { font-size: 8pt; text-align: right; color: #666; padding-top: 3px; }
-</style>
-</head>
-<body>${content}</body>
-</html>`;
-
-  const w = window.open('', '_blank', 'width=900,height=700');
-  if (!w) {
-    alert(isFr
-      ? 'La fenêtre d\'impression a été bloquée. Autorisez les popups pour ce site et réessayez.'
-      : 'Print window was blocked. Please allow popups for this page and try again.');
-    return;
-  }
-  w.document.open();
-  w.document.write(printPage);
-  w.document.close();
-  // Give fonts and layout time to render before triggering print
-  w.onload = () => setTimeout(() => { w.focus(); w.print(); }, 600);
-  setTimeout(() => { try { w.focus(); w.print(); } catch(e){} }, 1200);
-}
-
-// ═══════════════════════════════════════════════════════
-// HISTORY
-// ═══════════════════════════════════════════════════════
-function renderHistory() {
-  const tbody = document.getElementById('hist-tbody');
-  const empty = document.getElementById('hist-empty');
-  if (!exams.length) { empty.style.display = 'block'; tbody.innerHTML = ''; return; }
-  empty.style.display = 'none';
-  const rc = { Nurse:'b-blue', Doctor:'b-green', 'Medical Officer':'b-gold', 'Medical Coordinator':'b-purple', 'Lab Tech':'b-gray' };
-  tbody.innerHTML = [...exams].reverse().map((e, i) => {
-    const realIdx = exams.length - 1 - i;
-    return `<tr>
-      <td style="font-size:.76rem;color:var(--muted);white-space:nowrap">${new Date(e.created).toLocaleDateString()}</td>
-      <td><span class="badge ${rc[e.role] || 'b-gray'}">${e.role}</span></td>
-      <td style="font-size:.81rem">${e.station}</td>
-      <td><span class="badge b-blue">${e.lang === 'fr' ? '🇫🇷 FR' : '🇬🇧 EN'}</span></td>
-      <td style="text-align:center;font-size:.81rem">${e.nq}</td>
-      <td style="font-size:.76rem;color:var(--muted)">${e.grade || '—'}</td>
-      <td style="display:flex;gap:6px;align-items:center">
-        <button class="btn btn-sec btn-sm" onclick="reopenExam(${realIdx})">Reprint</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteExam(${realIdx})">Delete</button>
-      </td>
-    </tr>`;
-  }).join('');
-}
-
-function reopenExam(idx) {
-  const exam = exams[idx];
-  if (!exam) return;
-  openModal(exam);
-}
-
-function deleteExam(idx) {
-  if (!confirm('Delete this exam record?')) return;
-  exams.splice(idx, 1);
-  try { localStorage.setItem('un3_exams', JSON.stringify(exams)); } catch(e) {}
-  renderHistory();
-}
-
-// ═══════════════════════════════════════════════════════
-// SHAREPOINT SOURCES
-// ═══════════════════════════════════════════════════════
-function renderSPForm() {
-  document.getElementById('sp-form').innerHTML = SP_FILES.map(f => `
-    <div style="display:grid;grid-template-columns:180px 1fr auto;gap:10px;align-items:center;margin-bottom:11px">
-      <span class="badge ${f.badge}" style="text-align:center;white-space:nowrap">${f.role}</span>
-      <input type="text" id="sp-${f.key}"
-        value="${(spLinks[f.key] || '').replace(/"/g, '&quot;')}"
-        placeholder="Paste SharePoint share link for ${f.label}.xlsx"
-        style="font-size:.76rem;font-family:monospace">
-      <span id="sp-status-${f.key}" style="font-size:.74rem;white-space:nowrap;color:var(--muted)">
-        ${spSyncTimes[f.key] ? '✓ ' + spSyncTimes[f.key] : '—'}
-      </span>
-    </div>`).join('');
-}
-
-function renderSPLoadBtns() {
-  const rc = { physician:'b-green', medofficer:'b-gold', nurse:'b-blue', tech:'b-gray', coordinator:'b-purple' };
-  document.getElementById('sp-load-btns').innerHTML = SP_FILES.map(f => {
-    const hasLink = !!spLinks[f.key];
-    return `<button class="btn btn-sec btn-sm" onclick="fetchSPFile('${f.key}')"
-      ${hasLink ? '' : 'disabled style="opacity:.45"'}>
-      <span class="badge ${f.badge}">${f.role}</span> Load
-    </button>`;
-  }).join('');
-}
-
-function saveSPLinks() {
-  SP_FILES.forEach(f => {
-    const el = document.getElementById(`sp-${f.key}`);
-    if (el) spLinks[f.key] = el.value.trim();
-  });
-  localStorage.setItem('un3_sp', JSON.stringify(spLinks));
-  const msg = document.getElementById('sp-saved-msg');
-  msg.style.display = 'inline';
-  setTimeout(() => msg.style.display = 'none', 2500);
-  renderSPLoadBtns();
-}
-
-function spToDownloadUrl(link) {
-  if (!link) return null;
-  const url = link.trim();
-  // Append download=1 which triggers direct download for most SharePoint share links
-  return url.includes('?') ? url + '&download=1' : url + '?download=1';
-}
-
-async function fetchSPFile(key, silent = false) {
-  const info = SP_FILES.find(f => f.key === key);
-  const link = spLinks[key];
-  const logEl = document.getElementById('sp-load-msg');
-
-  if (!link) {
-    if (!silent && logEl) showMsg('sp-load-msg', 'warn', `No link saved for ${info.label}. Save a SharePoint link first.`);
-    return false;
-  }
-  if (!silent && logEl) showMsg('sp-load-msg', 'info', `⟳ Fetching ${info.label}.xlsx…`);
+  showMsg('gen-msg', 'info', '⟳ Building Word documents…');
+  document.getElementById('gen-btn').disabled = true;
 
   try {
-    const dlUrl = spToDownloadUrl(link);
-    const resp = await fetch(dlUrl, { credentials: 'include' });
-    if (!resp.ok) throw new Error(`Server returned HTTP ${resp.status}. Make sure you are signed into SharePoint in this browser.`);
+    const dateStr = dateVal
+      ? new Date(dateVal + 'T12:00:00').toLocaleDateString(isFr ? 'fr-FR' : 'en-GB', { day: '2-digit', month: 'long', year: 'numeric' })
+      : '________________';
 
-    const buf = await resp.arrayBuffer();
-    const wb = XLSX.read(new Uint8Array(buf), { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const rows = XLSX.utils.sheet_to_json(ws, { defval: '' });
-    if (!rows.length) throw new Error('File returned but contained no data rows.');
+    const roleLabel = (ROLE_TITLES[isFr ? 'fr' : 'en'][role] || role);
 
-    const norm = rows.map(r => {
-      const n = {};
-      for (const k of Object.keys(r)) n[k.trim()] = typeof r[k] === 'string' ? r[k].trim() : r[k];
-      return n;
-    }).filter(r => r.Role && (r.Question_EN || r.Question_FR));
+    // Build both docs
+    const examDocx   = buildDocx(selected, { role, lang, station, dateStr, grade, roleLabel, isFr, showAnswers: false });
+    const answerDocx = buildDocx(selected, { role, lang, station, dateStr, grade, roleLabel, isFr, showAnswers: true });
 
-    // Replace questions for this role
-    questions = questions.filter(q => q.Role !== info.role);
-    questions = questions.concat(norm);
-    saveQuestions();
+    // Download both
+    const safeName = station.replace(/[^a-zA-Z0-9]/g, '_');
+    const today    = new Date().toISOString().split('T')[0];
+    downloadBlob(examDocx,   `UN_Exam_${role.replace(/ /g,'_')}_${safeName}_${today}.docx`);
+    await sleep(400);
+    downloadBlob(answerDocx, `UN_AnswerKey_${role.replace(/ /g,'_')}_${safeName}_${today}.docx`);
 
-    const ts = new Date().toLocaleString();
-    spSyncTimes[key] = ts;
-    localStorage.setItem('un3_sptime', JSON.stringify(spSyncTimes));
-
-    if (!silent && logEl) {
-      showMsg('sp-load-msg', 'ok', `✓ Loaded <strong>${norm.length}</strong> questions for <strong>${info.role}</strong> — ${ts}`);
-      renderSPLoadBtns();
-      renderSPForm();
-    }
-    renderBankSummary();
-    return true;
+    showMsg('gen-msg', 'ok', `✓ Done — <strong>${selected.length} questions</strong> selected. Two files downloaded: exam paper + answer key.`);
   } catch(err) {
-    if (!silent && logEl) {
-      showMsg('sp-load-msg', 'warn', `
-        <strong>Could not fetch ${info.label}.xlsx</strong><br>
-        ${err.message}<br>
-        <ul style="margin-top:5px;padding-left:16px;font-size:.79rem;line-height:1.8">
-          <li>Make sure you are <strong>signed into SharePoint</strong> in this browser session</li>
-          <li>In SharePoint: open the file → <strong>Share → Copy link</strong> → set to <em>"People with existing access"</em></li>
-          <li>Try opening the link directly in a new browser tab first</li>
-          <li>Fallback: download the file and use <strong>Upload QBank</strong> instead</li>
-        </ul>`);
-    }
-    return false;
+    showMsg('gen-msg', 'err', '✗ Error building document: ' + err.message);
+    console.error(err);
   }
+  document.getElementById('gen-btn').disabled = false;
 }
 
-async function syncAllSP() {
-  const msg = document.getElementById('sp-sync-msg');
-  msg.textContent = 'Syncing…';
-  let ok = 0, fail = 0;
-  for (const f of SP_FILES) {
-    if (spLinks[f.key]) {
-      const result = await fetchSPFile(f.key, true);
-      result ? ok++ : fail++;
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+// ════════════════════════════════════════════════
+// DOCX BUILDER (pure JavaScript, no dependencies)
+// ════════════════════════════════════════════════
+function buildDocx(questions, cfg) {
+  const { role, lang, station, dateStr, grade, roleLabel, isFr, showAnswers } = cfg;
+
+  const qField = isFr ? 'Question_FR' : 'Question_EN';
+  const optSuffix = isFr ? '_FR' : '_EN';
+
+  // ── Strings ──
+  const S = {
+    title:     isFr ? 'QUESTIONS DE TEST ÉCRIT' : 'WRITTEN TEST QUESTIONS',
+    conf:      isFr ? 'STRICTEMENT CONFIDENTIEL' : 'STRICTLY CONFIDENTIAL',
+    instrHdr:  isFr ? 'Veuillez lire attentivement les instructions avant de commencer le test :' : 'Please read the instructions carefully before beginning the test:',
+    b1:        isFr ? `Le temps alloué est de deux (2) heures.` : `The time allocated is two (2) hours.`,
+    b2:        isFr ? 'Vous êtes encouragé(e) à répondre à toutes les questions au mieux de vos capacités.' : 'You are encouraged to ensure you attempt all the questions to the best of your ability.',
+    b3:        (isFr ? 'Nombre total de points pour l\'examen : ' : 'Total number of points for the exam: ') + questions.length + '.',
+    b4:        isFr ? 'Points par question : 1,0' : 'Points per question: 1.0',
+    b5:        isFr ? 'Les candidats ne sont pas autorisés à consulter des documents ni à utiliser des outils d\'IA pendant le test.' : 'Candidates are not permitted to consult any documents or use AI tools during the test.',
+    duration:  isFr ? 'DURÉE : 2 HEURES' : 'DURATION: 2 HOURS',
+    org:       isFr ? 'Programme des Nations Unies pour le Développement' : 'United Nations Development Programme',
+    tagline:   isFr ? 'Des vies améliorées. Des nations résilientes.' : 'Empowered lives. Resilient nations.',
+    footer:    `UN Clinic ${station} – ${grade || 'Written Test'} – ${isFr ? 'Test Écrit' : 'Written Test'}`,
+    answerKey: isFr ? 'CORRIGÉ — USAGE OFFICIEL UNIQUEMENT' : 'ANSWER KEY — OFFICIAL USE ONLY',
+    correct:   isFr ? 'Réponse correcte : ' : 'Correct answer: ',
+    expl:      isFr ? 'Explication : ' : 'Explanation: ',
+  };
+
+  // ── XML helpers ──
+  const esc = s => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const run = (text, opts = {}) => {
+    const props = [
+      opts.bold   ? '<w:b/>' : '',
+      opts.italic ? '<w:i/>' : '',
+      opts.size   ? `<w:sz w:val="${opts.size}"/><w:szCs w:val="${opts.size}"/>` : '',
+      opts.color  ? `<w:color w:val="${opts.color}"/>` : '',
+      opts.font   ? `<w:rFonts w:val="${opts.font}" w:hAnsi="${opts.font}" w:cs="${opts.font}"/>` : '',
+      opts.underline ? '<w:u w:val="single"/>' : '',
+    ].filter(Boolean).join('');
+    return `<w:r>${props ? `<w:rPr>${props}</w:rPr>` : ''}<w:t xml:space="preserve">${esc(text)}</w:t></w:r>`;
+  };
+
+  const para = (children, opts = {}) => {
+    const ppr = [
+      opts.align    ? `<w:jc w:val="${opts.align}"/>` : '',
+      opts.spacing  ? `<w:spacing w:before="${opts.spacing.before||0}" w:after="${opts.spacing.after||0}"/>` : '',
+      opts.indent   ? `<w:ind w:left="${opts.indent.left||0}" w:hanging="${opts.indent.hanging||0}"/>` : '',
+      opts.border   ? `<w:pBdr><w:bottom w:val="single" w:sz="6" w:space="4" w:color="C8D8E8"/></w:pBdr>` : '',
+    ].filter(Boolean).join('');
+    return `<w:p>${ppr ? `<w:pPr>${ppr}</w:pPr>` : ''}${Array.isArray(children) ? children.join('') : children}</w:p>`;
+  };
+
+  const bullet = (text, opts = {}) => {
+    const r = run(text, opts);
+    return `<w:p>
+      <w:pPr>
+        <w:numPr><w:ilvl w:val="0"/><w:numId w:val="1"/></w:numPr>
+        <w:spacing w:before="0" w:after="60"/>
+        <w:ind w:left="720" w:hanging="360"/>
+      </w:pPr>
+      ${r}
+    </w:p>`;
+  };
+
+  // ── Build question XML ──
+  const questionXml = questions.map((q, i) => {
+    const qText = q[qField] || q.Question_EN || '';
+    const options = ['A','B','C','D'].map(L => {
+      const f = `${L}${optSuffix}`;
+      const txt = q[f] || q[`${L}_EN`] || '';
+      if (!txt) return '';
+      const isCorrect = showAnswers && (L === String(q.Answer || '').trim().toUpperCase());
+      return `<w:p>
+        <w:pPr>
+          <w:spacing w:before="0" w:after="60"/>
+          <w:ind w:left="720" w:hanging="360"/>
+        </w:pPr>
+        ${isCorrect
+          ? run(`${L}.  ${txt}  ✓`, { bold: true, color: '1B6B3A' })
+          : run(`${L}.  ${txt}`)}
+      </w:p>`;
+    }).filter(Boolean).join('');
+
+    // Explanation (answer key only)
+    const expField = isFr ? 'Explanation_FR' : 'Explanation_EN';
+    const exp = q[expField] || q.Explanation_EN || '';
+    const explXml = (showAnswers && exp)
+      ? para([run(S.expl, { bold: true, italic: true, color: '005A8E' }), run(exp, { italic: true, color: '005A8E' })],
+          { spacing: { before: 40, after: 120 }, indent: { left: 720 } })
+      : '';
+
+    return [
+      // Question number + text
+      `<w:p>
+        <w:pPr>
+          <w:spacing w:before="160" w:after="80"/>
+          <w:keepNext/>
+        </w:pPr>
+        ${run(`${i+1}.  `, { bold: true })}
+        ${run(qText)}
+      </w:p>`,
+      options,
+      explXml,
+    ].join('');
+  }).join('');
+
+  // ── Header section XML ──
+  const headerXml = `
+    <!-- UNDP Org name + date row -->
+    ${para([
+      run(S.org, { bold: true, size: 20 }),
+    ], { spacing: { before: 0, after: 0 } })}
+    ${para([
+      run(S.tagline, { italic: true, size: 18, color: '666666' }),
+    ], { spacing: { before: 0, after: 80 } })}
+
+    <!-- Horizontal rule via paragraph border -->
+    ${para('', { border: true, spacing: { before: 0, after: 160 } })}
+
+    <!-- Date right-aligned -->
+    ${para([run((isFr ? 'Date : ' : 'Date: ') + dateStr)], { align: 'right', spacing: { before: 0, after: 60 } })}
+
+    <!-- WRITTEN TEST QUESTIONS centered + underlined -->
+    ${para([run(S.title, { bold: true, underline: true, size: 24 })], { align: 'center', spacing: { before: 60, after: 60 } })}
+
+    <!-- Role / position -->
+    ${para([run('UN Clinic ' + roleLabel, { bold: true, size: 22 })], { align: 'center', spacing: { before: 0, after: 40 } })}
+
+    <!-- Duty station -->
+    ${para([run(station, { size: 22 })], { align: 'center', spacing: { before: 0, after: 40 } })}
+
+    <!-- Duration -->
+    ${para([run(S.duration, { bold: true, size: 22 })], { align: 'center', spacing: { before: 0, after: 40 } })}
+
+    <!-- Grade (if provided) -->
+    ${grade ? para([run(grade, { underline: true, size: 22 })], { align: 'center', spacing: { before: 0, after: 40 } }) : ''}
+
+    <!-- Horizontal rule -->
+    ${para('', { border: true, spacing: { before: 0, after: 160 } })}
+
+    <!-- STRICTLY CONFIDENTIAL or ANSWER KEY -->
+    ${showAnswers
+      ? para([run(S.answerKey, { bold: true, size: 22, color: 'B02020' })], { align: 'center', spacing: { before: 0, after: 160 } })
+      : para([run(S.conf, { bold: true })], { spacing: { before: 0, after: 80 } })
     }
-  }
-  msg.textContent = `Done — ${ok} synced${fail ? ', ' + fail + ' failed' : ''}`;
-  msg.style.color = fail ? 'var(--danger)' : 'var(--success)';
-  renderSPForm();
-  renderSPLoadBtns();
-  showMsg('sp-load-msg', ok ? 'ok' : 'warn', `Sync complete: ${ok} file(s) loaded${fail ? ', ' + fail + ' failed (check links)' : ''}.`);
+
+    ${!showAnswers ? `
+    <!-- Instructions -->
+    ${para([run(S.instrHdr)], { spacing: { before: 0, after: 60 } })}
+    ${bullet(S.b1)}
+    ${bullet(S.b2)}
+    ${bullet(S.b3)}
+    ${bullet(S.b4)}
+    ${bullet(S.b5)}
+    ${para('', { border: true, spacing: { before: 120, after: 160 } })}
+    ` : ''}
+  `;
+
+  // ── Footer XML ──
+  const footerXml = `
+    <w:ftr w:type="default" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+      <w:p>
+        <w:pPr>
+          <w:jc w:val="right"/>
+          <w:rPr><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="888888"/></w:rPr>
+        </w:pPr>
+        <w:r>
+          <w:rPr><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="888888"/></w:rPr>
+          <w:t>${esc(S.footer)}</w:t>
+        </w:r>
+        <w:r><w:rPr><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="888888"/></w:rPr><w:t xml:space="preserve"> – </w:t></w:r>
+        <w:r>
+          <w:rPr><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="888888"/></w:rPr>
+          <w:fldChar w:fldCharType="begin"/>
+        </w:r>
+        <w:r>
+          <w:rPr><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="888888"/></w:rPr>
+          <w:instrText>PAGE</w:instrText>
+        </w:r>
+        <w:r>
+          <w:rPr><w:sz w:val="16"/><w:szCs w:val="16"/><w:color w:val="888888"/></w:rPr>
+          <w:fldChar w:fldCharType="end"/>
+        </w:r>
+      </w:p>
+    </w:ftr>`;
+
+  // ── Assemble full DOCX XML ──
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:wpc="http://schemas.microsoft.com/office/word/2010/wordprocessingCanvas"
+  xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+  xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+  xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml"
+  xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing">
+<w:body>
+${headerXml}
+${questionXml}
+<w:sectPr>
+  <w:footerReference w:type="default" r:id="rId2"/>
+  <w:pgSz w:w="11906" w:h="16838"/>
+  <w:pgMar w:top="1418" w:right="1418" w:bottom="1418" w:left="1418" w:header="709" w:footer="709" w:gutter="0"/>
+</w:sectPr>
+</w:body>
+</w:document>`;
+
+  const footerFullXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+${footerXml}`;
+
+  // ── Numbering XML for bullets ──
+  const numberingXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:numbering xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:abstractNum w:abstractNumId="0">
+    <w:lvl w:ilvl="0">
+      <w:start w:val="1"/>
+      <w:numFmt w:val="bullet"/>
+      <w:lvlText w:val="&#x2022;"/>
+      <w:lvlJc w:val="left"/>
+      <w:pPr><w:ind w:left="720" w:hanging="360"/></w:pPr>
+    </w:lvl>
+  </w:abstractNum>
+  <w:num w:numId="1">
+    <w:abstractNumId w:val="0"/>
+  </w:num>
+</w:numbering>`;
+
+  const stylesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+  <w:docDefaults>
+    <w:rPrDefault>
+      <w:rPr>
+        <w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:cs="Arial"/>
+        <w:sz w:val="22"/>
+        <w:szCs w:val="22"/>
+        <w:lang w:val="en-GB" w:eastAsia="en-GB" w:bidi="ar-SA"/>
+      </w:rPr>
+    </w:rPrDefault>
+  </w:docDefaults>
+</w:styles>`;
+
+  const relsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>
+  <Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/footer" Target="footer1.xml"/>
+  <Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/numbering" Target="numbering.xml"/>
+</Relationships>`;
+
+  const contentTypesXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml"  ContentType="application/xml"/>
+  <Override PartName="/word/document.xml"  ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+  <Override PartName="/word/styles.xml"    ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>
+  <Override PartName="/word/footer1.xml"   ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footer+xml"/>
+  <Override PartName="/word/numbering.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.numbering+xml"/>
+</Types>`;
+
+  const appRelsXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  // ── Pack into ZIP → DOCX ──
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', contentTypesXml);
+  zip.file('_rels/.rels', appRelsXml);
+  zip.file('word/document.xml', documentXml);
+  zip.file('word/styles.xml', stylesXml);
+  zip.file('word/footer1.xml', footerFullXml);
+  zip.file('word/numbering.xml', numberingXml);
+  zip.file('word/_rels/document.xml.rels', relsXml);
+
+  return zip.generateAsync({ type: 'blob', mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
 }
 
-// ═══════════════════════════════════════════════════════
+function downloadBlob(blobPromise, filename) {
+  blobPromise.then(blob => {
+    const url = URL.createObjectURL(blob);
+    const a   = document.createElement('a');
+    a.href     = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  });
+}
+
+// ════════════════════════════════════════════════
 // UTILITIES
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════
 function showMsg(id, type, html) {
   const el = document.getElementById(id);
-  if (!el) return;
+  el.className = 'msg';
   if (!type) { el.innerHTML = ''; return; }
-  const cls = { ok: 'a-ok', warn: 'a-warn', info: 'a-info' }[type] || 'a-info';
-  el.innerHTML = `<div class="alert ${cls}" style="margin:0">${html}</div>`;
+  el.classList.add('show', type === 'ok' ? 'msg-ok' : type === 'err' ? 'msg-err' : 'msg-info');
+  el.innerHTML = html;
 }
 
-// ═══════════════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════════════
+// ════════════════════════════════════════════════
+// INIT — load JSZip dynamically
+// ════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('g-date').value = new Date().toISOString().split('T')[0];
-  renderBankSummary();
+  document.getElementById('date').value = new Date().toISOString().split('T')[0];
 
-  // Seed demo questions if pool is empty
-  if (!questions.length) {
-    questions = [
-      {Role:'Nurse',Category:'Emergency / Triage',Difficulty:'1',Question_EN:'A patient presents with chest pain radiating to the left arm. What is the priority action?',Question_FR:'Un patient présente des douleurs thoraciques. Quelle est l\'action prioritaire ?',A_EN:'Administer aspirin',B_EN:'Perform a 12-lead ECG immediately',C_EN:'Take vital signs and wait',D_EN:'Call the physician',A_FR:'Administrer de l\'aspirine',B_FR:'Effectuer un ECG 12 dérivations',C_FR:'Prendre les signes vitaux',D_FR:'Appeler le médecin',Answer:'B',Explanation_EN:'Immediate ECG is critical.',Explanation_FR:'ECG immédiat est critique.'},
-      {Role:'Nurse',Category:'Medication',Difficulty:'2',Question_EN:'Correct adult dose of epinephrine for anaphylaxis?',Question_FR:'Dose adulte correcte d\'épinéphrine pour l\'anaphylaxie ?',A_EN:'0.1mg IV',B_EN:'0.3mg IM anterolateral thigh',C_EN:'1mg IV bolus',D_EN:'0.5mg SC',A_FR:'0,1mg IV',B_FR:'0,3mg IM cuisse',C_FR:'1mg IV bolus',D_FR:'0,5mg SC',Answer:'B',Explanation_EN:'0.3mg IM is the standard adult dose.',Explanation_FR:'0,3mg IM est la dose adulte standard.'},
-      {Role:'Doctor',Category:'Emergency',Difficulty:'2',Question_EN:'First-line pharmacological treatment for status epilepticus?',Question_FR:'Traitement de première ligne de l\'état de mal épileptique ?',A_EN:'Phenytoin IV',B_EN:'Diazepam or Lorazepam IV',C_EN:'Sodium valproate IM',D_EN:'Levetiracetam PO',A_FR:'Phénytoïne IV',B_FR:'Diazépam ou Lorazépam IV',C_FR:'Valproate IM',D_FR:'Lévétiracétam PO',Answer:'B',Explanation_EN:'Benzodiazepines are first-line.',Explanation_FR:'Les benzodiazépines sont de première ligne.'},
-      {Role:'Doctor',Category:'Infectious Disease / Tropical Medicine',Difficulty:'3',Question_EN:'What are the main symptoms of cholera?',Question_FR:'Quels sont les principaux symptômes du choléra ?',A_EN:'Fever and rash',B_EN:'Profuse watery diarrhea and dehydration',C_EN:'Cough and dyspnea',D_EN:'Abdominal pain and constipation',A_FR:'Fièvre et éruption cutanée',B_FR:'Diarrhée aqueuse profuse et déshydratation',C_FR:'Toux et dyspnée',D_FR:'Douleur abdominale et constipation',Answer:'B',Explanation_EN:'Cholera causes profuse watery diarrhea leading to rapid dehydration.',Explanation_FR:'Le choléra provoque une diarrhée aqueuse profuse entraînant une déshydratation rapide.'},
-      {Role:'Medical Officer',Category:'International Humanitarian Law',Difficulty:'3',Question_EN:'What are the three main sources of IHL?',Question_FR:'Quelles sont les trois principales sources du DIH ?',A_EN:'Geneva Conventions and Protocols',B_EN:'Hague Conventions',C_EN:'Universal Declaration of Human Rights',D_EN:'All of the above',A_FR:'Conventions de Genève',B_FR:'Conventions de La Haye',C_FR:'DUDH',D_FR:'Tout ce qui précède',Answer:'D',Explanation_EN:'IHL derives from Geneva, Hague and UDHR.',Explanation_FR:'Le DIH découle des Conventions de Genève, de La Haye et de la DUDH.'},
-      {Role:'Medical Officer',Category:'Leadership & Management',Difficulty:'2',Question_EN:'What characterizes a transformational leader?',Question_FR:'Qu\'est-ce qui caractérise un leader transformationnel ?',A_EN:'Focuses on rules',B_EN:'Inspires with shared vision',C_EN:'Manages budgets strictly',D_EN:'Delegates all decisions',A_FR:'Règles et conformité',B_FR:'Inspire avec vision partagée',C_FR:'Gestion stricte des budgets',D_FR:'Délègue toutes les décisions',Answer:'B',Explanation_EN:'Transformational leaders inspire through shared vision.',Explanation_FR:'Les leaders transformationnels inspirent à travers une vision partagée.'},
-      {Role:'Medical Coordinator',Category:'Leadership & Management',Difficulty:'1',Question_EN:'Which tool helps prioritize tasks by urgency and importance?',Question_FR:'Quel outil aide à prioriser les tâches par urgence et importance ?',A_EN:'Gantt chart',B_EN:'Eisenhower Matrix',C_EN:'SWOT analysis',D_EN:'Risk register',A_FR:'Diagramme de Gantt',B_FR:'Matrice d\'Eisenhower',C_FR:'Analyse SWOT',D_FR:'Registre des risques',Answer:'B',Explanation_EN:'The Eisenhower Matrix categorizes tasks by urgency and importance.',Explanation_FR:'La matrice d\'Eisenhower classe les tâches par urgence et importance.'},
-      {Role:'Lab Tech',Category:'Equipment / Sterilization',Difficulty:'2',Question_EN:'What SAL is required for surgical instruments?',Question_FR:'Quel SAL est requis pour les instruments chirurgicaux ?',A_EN:'10⁻²',B_EN:'10⁻⁴',C_EN:'10⁻⁶',D_EN:'10⁻⁸',A_FR:'10⁻²',B_FR:'10⁻⁴',C_FR:'10⁻⁶',D_FR:'10⁻⁸',Answer:'C',Explanation_EN:'SAL 10⁻⁶ is the WHO standard for surgical instrument sterilization.',Explanation_FR:'SAL 10⁻⁶ est la norme OMS.'},
-      {Role:'Lab Tech',Category:'Laboratory',Difficulty:'1',Question_EN:'WHO recommended cold chain temperature for vaccines?',Question_FR:'Température de chaîne du froid recommandée par l\'OMS pour les vaccins ?',A_EN:'-20°C to -15°C',B_EN:'2°C to 8°C',C_EN:'0°C to 4°C',D_EN:'10°C to 15°C',A_FR:'-20°C à -15°C',B_FR:'2°C à 8°C',C_FR:'0°C à 4°C',D_FR:'10°C à 15°C',Answer:'B',Explanation_EN:'WHO standard is 2–8°C for vaccine cold chain.',Explanation_FR:'La norme OMS est 2–8°C pour la chaîne du froid vaccinale.'},
-    ];
-    saveQuestions();
-    renderBankSummary();
-  }
+  // Load JSZip (needed to build .docx ZIP archives)
+  const script = document.createElement('script');
+  script.src = 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+  script.onerror = () => showMsg('gen-msg', 'err', '⚠ Could not load JSZip library. Check your internet connection.');
+  document.head.appendChild(script);
 });
 </script>
 </body>
