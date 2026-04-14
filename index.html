@@ -166,30 +166,7 @@ input[type=file] { display: none; }
 }
 .fg-full { grid-column: 1 / -1; }
 
-/* ── OPTIONS ── */
-.opts-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-top: 2px;
-}
-.opt-card {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 14px;
-  border: 1.5px solid var(--border);
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.12s;
-  user-select: none;
-  background: white;
-}
-.opt-card:hover { border-color: var(--blue); background: var(--light); }
-.opt-card input[type=checkbox] { width: 16px; height: 16px; accent-color: var(--dark); cursor: pointer; }
-.opt-card-text { font-size: 0.83rem; }
-.opt-card-title { font-weight: 600; color: var(--text); }
-.opt-card-sub   { font-size: 0.73rem; color: var(--muted); margin-top: 1px; }
+
 
 /* ── DIFFICULTY ── */
 .diff-row { display: flex; gap: 8px; margin-top: 2px; }
@@ -245,6 +222,23 @@ input[type=file] { display: none; }
 .msg-ok   { background: #EAF7EE; border: 1px solid #A8D8B8; color: var(--green); }
 .msg-err  { background: #FDECEA; border: 1px solid #F0C0C0; color: var(--red); }
 .msg-info { background: var(--light); border: 1px solid #B3D9F0; color: #005A8E; }
+
+.btn-template {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: white;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.btn-template:hover { border-color: var(--blue); color: var(--blue); background: var(--light); }
 
 /* ── BADGE ── */
 .badge {
@@ -326,6 +320,10 @@ footer {
         <div id="summary-rows"></div>
       </div>
       <div class="msg" id="load-msg"></div>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+        <p style="font-size:0.78rem;color:var(--muted);margin-bottom:8px">Don't have a QBank yet? Download the Excel template:</p>
+        <button class="btn-template" onclick="downloadTemplate()">⬇ Download Excel Template</button>
+      </div>
     </div>
   </div>
 
@@ -391,25 +389,6 @@ footer {
         </div>
       </div>
 
-      <hr>
-
-      <div style="font-size:0.72rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;color:var(--muted);margin-bottom:8px">Question Types</div>
-      <div class="opts-grid">
-        <label class="opt-card">
-          <input type="checkbox" id="inc-mgmt" checked onchange="updatePool()">
-          <div class="opt-card-text">
-            <div class="opt-card-title">Managerial Questions</div>
-            <div class="opt-card-sub">Leadership, admin, UN conduct & ethics</div>
-          </div>
-        </label>
-        <label class="opt-card">
-          <input type="checkbox" id="inc-ihl" checked onchange="updatePool()">
-          <div class="opt-card-text">
-            <div class="opt-card-title">IHL / Humanitarian Law</div>
-            <div class="opt-card-sub">International humanitarian law questions</div>
-          </div>
-        </label>
-      </div>
 
       <div class="pool-info" id="pool-info" style="display:none"></div>
 
@@ -445,16 +424,7 @@ footer {
 // ════════════════════════════════════════════════
 let questions = [];
 
-const MGMT_CATS = [
-  'leadership','management','un competenc','professionalism','accountability',
-  'code of conduct','code of ethics','medical ethics','integrity',
-  'emotional intelligence','performance appraisal','health systems & admin',
-  'humanitarian aid','humanitarian intervention'
-];
-const IHL_CATS = [
-  'international humanitarian law','ihl','humanitarian law',
-  'droit international humanitaire'
-];
+
 
 const ROLE_BADGE = {
   'Nurse':'b-blue', 'Doctor':'b-green',
@@ -569,22 +539,13 @@ function renderLoaded(filename) {
 // ════════════════════════════════════════════════
 // POOL CALCULATION
 // ════════════════════════════════════════════════
-function isMgmt(q) {
-  const s = ((q.Category||'') + ' ' + (q.Question_EN||'')).toLowerCase();
-  return MGMT_CATS.some(k => s.includes(k));
-}
-function isIHL(q) {
-  const s = (q.Category||'').toLowerCase();
-  return IHL_CATS.some(k => s.includes(k));
-}
+
 
 function getPool() {
-  const role    = document.getElementById('role').value;
-  const incD1   = document.getElementById('d1').checked;
-  const incD2   = document.getElementById('d2').checked;
-  const incD3   = document.getElementById('d3').checked;
-  const incMgmt = document.getElementById('inc-mgmt').checked;
-  const incIHL  = document.getElementById('inc-ihl').checked;
+  const role = document.getElementById('role').value;
+  const incD1 = document.getElementById('d1').checked;
+  const incD2 = document.getElementById('d2').checked;
+  const incD3 = document.getElementById('d3').checked;
 
   let pool = questions.filter(q => !role || q.Role === role);
   pool = pool.filter(q => {
@@ -594,8 +555,6 @@ function getPool() {
     if (d === '3' && !incD3) return false;
     return true;
   });
-  if (!incMgmt) pool = pool.filter(q => !isMgmt(q));
-  if (!incIHL)  pool = pool.filter(q => !isIHL(q));
   return pool;
 }
 
@@ -622,7 +581,7 @@ async function generate() {
   const dateVal = document.getElementById('date').value;
   const nqRaw   = parseInt(document.getElementById('nq').value) || 100;
   const grade   = document.getElementById('grade').value.trim();
-  const isFr    = lang === 'fr';
+  const isFr = lang === 'fr';
 
   if (!questions.length) { showMsg('gen-msg','err','⚠ Load a QBank file first (Step 1).'); return; }
   if (!role)             { showMsg('gen-msg','err','⚠ Select a provider role.'); return; }
@@ -961,6 +920,52 @@ function showMsg(id, type, html) {
   if (!type) { el.innerHTML = ''; return; }
   el.classList.add('show', type === 'ok' ? 'msg-ok' : type === 'err' ? 'msg-err' : 'msg-info');
   el.innerHTML = html;
+}
+
+// ════════════════════════════════════════════════
+// TEMPLATE DOWNLOAD
+// ════════════════════════════════════════════════
+function downloadTemplate() {
+  const headers = ['Role','Category','Difficulty','Question_EN','Question_FR',
+    'A_EN','B_EN','C_EN','D_EN','A_FR','B_FR','C_FR','D_FR',
+    'Answer','Explanation_EN','Explanation_FR'];
+  const rows = [
+    ['Nurse','Emergency / Triage',1,
+      'A patient presents with chest pain radiating to the left arm. What is the priority action?',
+      'Un patient présente des douleurs thoraciques. Quelle est l'action prioritaire ?',
+      'Administer aspirin','Perform a 12-lead ECG immediately','Take vital signs and wait','Call the physician',
+      'Administrer de l'aspirine','Effectuer un ECG 12 dérivations','Prendre les signes vitaux','Appeler le médecin',
+      'B','Immediate 12-lead ECG is critical to rule out STEMI.','L'ECG 12 dérivations est critique pour exclure un STEMI.'],
+    ['Doctor','Pharmacology',2,
+      'First-line treatment for anaphylaxis in adults?',
+      'Traitement de première ligne pour l'anaphylaxie chez l'adulte ?',
+      'Antihistamine','Corticosteroid','Epinephrine 0.3mg IM','Oxygen only',
+      'Antihistaminique','Corticostéroïde','Épinéphrine 0.3mg IM','Oxygène seulement',
+      'C','Epinephrine IM is the only immediate treatment for anaphylaxis.','L'épinéphrine IM est le seul traitement immédiat.'],
+    ['Medical Officer','International Humanitarian Law',3,
+      'What are the three main sources of IHL?',
+      'Quelles sont les trois principales sources du DIH ?',
+      'Geneva Conventions and Protocols','Hague Conventions','Universal Declaration of Human Rights','All of the above',
+      'Conventions de Genève','Conventions de La Haye','DUDH','Tout ce qui précède',
+      'D','IHL derives from Geneva, Hague and UDHR.','Le DIH découle des Conventions de Genève, de La Haye et de la DUDH.'],
+    ['Medical Coordinator','Leadership & Management',1,
+      'What characterizes a transformational leader?',
+      'Qu'est-ce qui caractérise un leader transformationnel ?',
+      'Focuses on rules','Inspires with shared vision','Manages budgets','Delegates all decisions',
+      'Se concentre sur les règles','Inspire avec vision partagée','Gère les budgets','Délègue toutes les décisions',
+      'B','Transformational leaders inspire through shared vision.','Les leaders transformationnels inspirent à travers une vision partagée.'],
+    ['Lab Tech','Equipment / Sterilization',2,
+      'What SAL is required for surgical instruments?',
+      'Quel SAL est requis pour les instruments chirurgicaux ?',
+      '10⁻²','10⁻⁴','10⁻⁶','10⁻⁸',
+      '10⁻²','10⁻⁴','10⁻⁶','10⁻⁸',
+      'C','SAL 10⁻⁶ is the WHO standard for surgical instrument sterilization.','SAL 10⁻⁶ est la norme OMS.'],
+  ];
+  const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+  ws['!cols'] = headers.map((_, i) => ({ wch: i < 3 ? 16 : 32 }));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'QBank');
+  XLSX.writeFile(wb, 'UN_QBank_Template.xlsx');
 }
 
 // ════════════════════════════════════════════════
